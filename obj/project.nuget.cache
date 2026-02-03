@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "dgSpecHash": "s2IEB15pCL0=",
+  "success": true,
+  "projectFilePath": "/home/filk/programming/sojourner/sojourner.csproj",
+  "expectedPackageFiles": [
+    "/home/filk/.nuget/packages/lidgren.network/1.0.2/lidgren.network.1.0.2.nupkg.sha512",
+    "/home/filk/.nuget/packages/litenetlib/2.0.1/litenetlib.2.0.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/monogame.content.builder.task/3.8.4.1/monogame.content.builder.task.3.8.4.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/monogame.framework.desktopgl/3.8.4.1/monogame.framework.desktopgl.3.8.4.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/monogame.library.openal/1.24.3.2/monogame.library.openal.1.24.3.2.nupkg.sha512",
+    "/home/filk/.nuget/packages/monogame.library.sdl/2.32.2.1/monogame.library.sdl.2.32.2.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/nvorbis/0.10.4/nvorbis.0.10.4.nupkg.sha512",
+    "/home/filk/.nuget/packages/system.memory/4.5.3/system.memory.4.5.3.nupkg.sha512",
+    "/home/filk/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Lidgren.Network 1.0.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Lidgren.Network",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
+}

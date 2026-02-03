@@ -1,0 +1,86 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/filk/programming/sojourner/sojourner.csproj": {}
+  },
+  "projects": {
+    "/home/filk/programming/sojourner/sojourner.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/filk/programming/sojourner/sojourner.csproj",
+        "projectName": "sojourner",
+        "projectPath": "/home/filk/programming/sojourner/sojourner.csproj",
+        "packagesPath": "/home/filk/.nuget/packages/",
+        "outputPath": "/home/filk/programming/sojourner/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/filk/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "/usr/lib64/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Lidgren.Network": {
+              "target": "Package",
+              "version": "[1.0.2, )"
+            },
+            "LiteNetLib": {
+              "target": "Package",
+              "version": "[2.0.1, )"
+            },
+            "MonoGame.Content.Builder.Task": {
+              "target": "Package",
+              "version": "[3.8.*, )"
+            },
+            "MonoGame.Framework.DesktopGL": {
+              "target": "Package",
+              "version": "[3.8.*, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.113/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
