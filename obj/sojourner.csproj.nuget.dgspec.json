@@ -45,6 +45,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Gum.MonoGame": {
+              "target": "Package",
+              "version": "[2026.1.31.1, )"
+            },
             "Lidgren.Network": {
               "target": "Package",
               "version": "[1.0.2, )"
@@ -56,6 +60,10 @@
             "MonoGame.Content.Builder.Task": {
               "target": "Package",
               "version": "[3.8.*, )"
+            },
+            "MonoGame.Extended": {
+              "target": "Package",
+              "version": "[5.3.1, )"
             },
             "MonoGame.Framework.DesktopGL": {
               "target": "Package",

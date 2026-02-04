@@ -1,18 +1,27 @@
 {
   "version": 2,
-  "dgSpecHash": "s2IEB15pCL0=",
+  "dgSpecHash": "2AYkm1dEMp0=",
   "success": true,
   "projectFilePath": "/home/filk/programming/sojourner/sojourner.csproj",
   "expectedPackageFiles": [
+    "/home/filk/.nuget/packages/flatredball.gumcommon/2026.1.31.1/flatredball.gumcommon.2026.1.31.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/flatredball.interpolationcore/2025.4.22.1/flatredball.interpolationcore.2025.4.22.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/gum.monogame/2026.1.31.1/gum.monogame.2026.1.31.1.nupkg.sha512",
     "/home/filk/.nuget/packages/lidgren.network/1.0.2/lidgren.network.1.0.2.nupkg.sha512",
     "/home/filk/.nuget/packages/litenetlib/2.0.1/litenetlib.2.0.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
+    "/home/filk/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/7.0.0/microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "/home/filk/.nuget/packages/monogame.content.builder.task/3.8.4.1/monogame.content.builder.task.3.8.4.1.nupkg.sha512",
+    "/home/filk/.nuget/packages/monogame.extended/5.3.1/monogame.extended.5.3.1.nupkg.sha512",
     "/home/filk/.nuget/packages/monogame.framework.desktopgl/3.8.4.1/monogame.framework.desktopgl.3.8.4.1.nupkg.sha512",
     "/home/filk/.nuget/packages/monogame.library.openal/1.24.3.2/monogame.library.openal.1.24.3.2.nupkg.sha512",
     "/home/filk/.nuget/packages/monogame.library.sdl/2.32.2.1/monogame.library.sdl.2.32.2.1.nupkg.sha512",
     "/home/filk/.nuget/packages/nvorbis/0.10.4/nvorbis.0.10.4.nupkg.sha512",
+    "/home/filk/.nuget/packages/system.data.datasetextensions/4.5.0/system.data.datasetextensions.4.5.0.nupkg.sha512",
     "/home/filk/.nuget/packages/system.memory/4.5.3/system.memory.4.5.3.nupkg.sha512",
-    "/home/filk/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512"
+    "/home/filk/.nuget/packages/system.numerics.vectors/4.5.0/system.numerics.vectors.4.5.0.nupkg.sha512",
+    "/home/filk/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
+    "/home/filk/.nuget/packages/textcopy/6.2.1/textcopy.6.2.1.nupkg.sha512"
   ],
   "logs": [
     {

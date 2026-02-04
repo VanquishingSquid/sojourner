@@ -1,0 +1,10 @@
+// Source - https://stackoverflow.com/a/76552230
+// Posted by svprdga, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-02-03, License - CC BY-SA 4.0
+
+#  CSharp formatting rules:
+[*.cs]
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_else = false
+csharp_new_line_before_catch = false
+csharp_new_line_before_finally = false

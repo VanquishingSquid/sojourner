@@ -32,3 +32,11 @@
 /home/filk/programming/sojourner/obj/Debug/net9.0/sojourner.pdb
 /home/filk/programming/sojourner/obj/Debug/net9.0/sojourner.genruntimeconfig.cache
 /home/filk/programming/sojourner/obj/Debug/net9.0/ref/sojourner.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/LiteNetLib.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/MonoGame.Extended.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/Cantarell.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/GumCommon.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/FlatRedBall.InterpolationCore.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/MonoGameGum.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/TextCopy.dll
