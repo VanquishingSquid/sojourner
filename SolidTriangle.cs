@@ -9,7 +9,8 @@ namespace sojourner;
 
 public class SolidTriangle {
     public int width, height, x, y;
-    bool isslopeleft;
+    public bool isslopeleft;
+    public float gradient;
     public Vector2 toppoint, botpoint;
 
     public SolidTriangle(int x, int y, int width, int height, bool isslopeleft) {
@@ -20,6 +21,7 @@ public class SolidTriangle {
         this.isslopeleft = isslopeleft;
         this.toppoint = new Vector2(isslopeleft ? x : x+width, y);
         this.botpoint = new Vector2(isslopeleft ? x+width : x, y+height);
+        this.gradient = isslopeleft ? -height/width : height/width;
     }
 
     public void Update() {

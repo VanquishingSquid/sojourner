@@ -40,3 +40,8 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/MonoGameGum.dll
 /home/filk/programming/sojourner/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
 /home/filk/programming/sojourner/bin/Debug/net9.0/TextCopy.dll
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/circle.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/code-manual.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/square.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/star.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/triangle.xnb
