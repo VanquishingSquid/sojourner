@@ -78,7 +78,7 @@ public class GameRover : Game
         codeMovingBlock = new SolidRect(883,570,150,100);
 
         solids = new() {
-            new SolidRect(-1000,770,2000,30), // ground
+            new SolidRect(-3000,770,4000,30), // ground
             new SolidRect(883,670,150,100),  // block after code entry below
             new SolidRect(883,0,150,570),    // block after code entry above
             codeMovingBlock,
@@ -199,8 +199,26 @@ public class GameRover : Game
             ((100,25),(105,20))
         ];
 
-        // List<((int,int),(int,int))> xsysplatforms = [
-        // ];
+        List<((int,int),(int,int))> xsysplatformsfake = [
+            // ((50,5),(60,5)),
+            ((15,10),(25,10)),
+            // ((70,10),(75,10)),
+            // ((60,15),(70,15)),
+            // ((95,15),(100,15)),
+            // ((15,20),(40,20)),
+            // ((50,20),(60,20)),
+            // ((100,20),(105,20)),
+            // ((20,25),(45,25)),
+        ];
+
+        List<((int,int),(int,int))> xsystrianglesfake = [
+            ((25,10),(30,15)),
+            ((50,10),(55,15)),
+            ((60,25),(65,20)),
+            ((70,15),(80,5)),
+            ((75,25),(80,20)),
+            ((100,15),(105,20)),
+        ];
 
         platforms.AddRange(xsysplatforms.Select(coords => {
             int x1 = initx - unitSize*coords.Item1.Item1;
@@ -208,6 +226,14 @@ public class GameRover : Game
             int x2 = initx - unitSize*coords.Item2.Item1;
             int y2 = inity - unitSize*coords.Item2.Item2;
             return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2));
+        }));
+
+        platforms.AddRange(xsysplatformsfake.Select(coords => {
+            int x1 = initx - unitSize*coords.Item1.Item1;
+            int y1 = inity - unitSize*coords.Item1.Item2;
+            int x2 = initx - unitSize*coords.Item2.Item1;
+            int y2 = inity - unitSize*coords.Item2.Item2;
+            return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2), true);
         }));
 
         triangles.AddRange(xsystriangles.Select(coords => {
@@ -227,6 +253,25 @@ public class GameRover : Game
 
             // we know that x1 has to be less than x2
             return new SolidTriangle(x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2);
+        }));
+
+        triangles.AddRange(xsystrianglesfake.Select(coords => {
+            int x1 = initx - unitSize*coords.Item1.Item1;
+            int y1 = inity - unitSize*coords.Item1.Item2;
+            int x2 = initx - unitSize*coords.Item2.Item1;
+            int y2 = inity - unitSize*coords.Item2.Item2;
+
+            if (x1>x2) {
+                int xt = x1;
+                int yt = y1;
+                x1 = x2;
+                y1 = y2;
+                x2 = xt;
+                y2 = yt;
+            }
+
+            // we know that x1 has to be less than x2
+            return new SolidTriangle(x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2, true);
         }));
     }
 

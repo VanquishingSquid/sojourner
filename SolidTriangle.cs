@@ -12,8 +12,9 @@ public class SolidTriangle {
     public bool isslopeleft;
     public float gradient;
     public Vector2 toppoint, botpoint;
+    public bool fake;
 
-    public SolidTriangle(int x, int y, int width, int height, bool isslopeleft) {
+    public SolidTriangle(int x, int y, int width, int height, bool isslopeleft, bool fake=false) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -22,6 +23,7 @@ public class SolidTriangle {
         this.toppoint = new Vector2(isslopeleft ? x : x+width, y);
         this.botpoint = new Vector2(isslopeleft ? x+width : x, y+height);
         this.gradient = isslopeleft ? -height/width : height/width;
+        this.fake = fake;
     }
 
     public void Update() {
@@ -35,7 +37,7 @@ public class SolidTriangle {
             toppointlocal,
         ];
 
-        _spriteBatch.DrawPolygon(new Vector2(x-xoffset, y), trianglePoints, Color.LightGray, 3f);
+        _spriteBatch.DrawPolygon(new Vector2(x-xoffset, y), trianglePoints, fake ? Color.Gray : Color.LightGray, 3f);
     }
 
     public Vector2? IntersectionPoint(Vector2 p1, Vector2 p2) {
@@ -54,9 +56,7 @@ public class SolidTriangle {
 
     public int GetCorrespondingY(int x1, int x2) {
         float xrange = toppoint.X-botpoint.X;
-        float yrange = toppoint.Y-botpoint.Y;
-        // Console.WriteLine($"x: {x} | coords: ({botpoint.X},{botpoint.Y})->({toppoint.X},{toppoint.Y}) | xrange: {xrange} | yrange: {yrange} | offset: {(x-botpoint.X)/xrange * yrange} | final: {(int)(botpoint.Y + (x-botpoint.X)/xrange * yrange)}");
-        
+        float yrange = toppoint.Y-botpoint.Y;        
         float y1 = botpoint.Y + (x1-botpoint.X)/xrange * yrange;
         float y2 = botpoint.Y + (x2-botpoint.X)/xrange * yrange;
         

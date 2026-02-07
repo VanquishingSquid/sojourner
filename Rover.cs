@@ -42,7 +42,7 @@ public class Rover {
         }
         
         if (Kb.IsDown(Ks.Down)) {
-            deactivationtime=maxdeactivationtime;
+            deactivationtime=Math.Max(deactivationtime,maxdeactivationtime);
         }
 
         // falling
@@ -119,8 +119,7 @@ public class Rover {
         if (deactivationtime == 0) {
             for (int i = 0; i < triangles.Count; i++) {
                 SolidTriangle t = triangles[i];
-                // if (t.isslopeleft)
-                //     Console.WriteLine($"leftslope: {t.isslopeleft} | colliding: {CollideWithSlope(x,y,t)} | coords: ({x},{y}) | prevcoords: ({lastx},{lasty}) | t_rect: ({t.x},{t.y},{t.width},{t.height}) | tgrad: {t.gradient} | mgrad: {GetGradient(lastx, lasty, x, y)}");
+
                 if (CollideWithSlope(x,y,t) /* slope intersects rover */) {
                     float movementGradient = GetGradient(lastx, lasty, x, y);
                     if (!trianglesColl[i] /* we are not already colliding with the triangle */) {
@@ -139,6 +138,13 @@ public class Rover {
                             trianglesColl[i]=false; // change variable to show we haven't collided
                             fallspeed=0;
                             y=t.GetCorrespondingY(x,x+width)-height;
+                            
+                            if (t.fake) {
+                                float midpoint = t.x+t.width/2;
+                                if (x<midpoint && midpoint<x+width) {
+                                    deactivationtime=180;
+                                }
+                            }
                         } else {
                             trianglesColl[i]=true;
                         }
@@ -158,6 +164,13 @@ public class Rover {
                 )) {
                         fallspeed=0;
                         y=p.y-height;
+
+                        if (p.fake) {
+                            float midpoint = p.x+p.width/2;
+                            if (x<midpoint && midpoint<x+width) {
+                                deactivationtime=180;
+                            }
+                        }
                 }
             }
         } else {

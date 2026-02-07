@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("sojourner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ea38eeb1b1b9677d36158888426d720a6aa6722")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21543e8490baad9e041e73c779a53ddbd50ce884")]
 [assembly: System.Reflection.AssemblyProductAttribute("sojourner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("sojourner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
