@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using System;
 
 namespace sojourner;
@@ -8,33 +9,54 @@ namespace sojourner;
 public class MCButton {
     Action f;
     public int x,y,width,height;
+    int textx,texty,textwidth,textheight;
     public string text;
-    const float scale = 0.75f;
+    float scale;
 
-    public MCButton(int x, int y, string text, Action f, SpriteFont font) {
+    public MCButton(int x, int y, string text, Action f, SpriteFont font, float scale=0.75f) {
         this.x = x;
         this.y = y;
         this.text = text;
         this.f = f;
+        this.scale = scale;
 
-        // Console.WriteLine($"a");
-        // Console.WriteLine($"{text}");
-        // Console.WriteLine($"{font.MeasureString(text)}");
         Vector2 dims = font.MeasureString(text);
-        this.width = (int)(dims.X*0.75);
-        this.height = (int)(dims.Y*0.75);
+        this.width = (int)(dims.X*scale);
+        this.height = (int)(dims.Y*scale);
+
+        this.textx = x;
+        this.texty = y;
+        this.textwidth = width;
+        this.textheight = height;
+    }
+
+    public void UpdateX(int x) {
+        int diff = this.textx - this.x;
+        this.x = x;
+        this.textx = this.x + diff;
+    }
+
+    public void UpdateY(int y) {
+        int diff = this.texty - this.y;
+        this.y = y;
+        this.texty = this.y + diff;
     }
 
     public void Update() {
         float xm = Mouse.GetState().X;
         float ym = Mouse.GetState().Y;
         if (Kb.IsMouseClicked() && x<=xm && xm<=x+width && y<=ym && ym<=y+height) {
-            // Console.WriteLine($"{Kb.IsMouseClicked()} | {x} <= {xm} <= {x+width} | {y} <= {ym} <= {y+height}");
             f();
         }
     }
 
+    public void CenterText() {
+        textx = (int)(x+width/2f-textwidth/2);
+        texty = (int)(y+height/2f-textheight/2);
+    }
+
     public void Draw(SpriteBatch _spriteBatch, SpriteFont font) {
-        _spriteBatch.DrawString(font, text, new Vector2(x,y), Color.Black, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        _spriteBatch.FillRectangle(new RectangleF(x,y,width,height), Color.Beige);
+        _spriteBatch.DrawString(font, text, new Vector2(textx,texty), Color.Black, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 }

@@ -18,8 +18,7 @@ namespace sojourner;
 
 using CodeObject = KeyValuePair<List<bool>,Texture2D>;
 
-public class GameRover : Game
-{
+public class GameRover : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     EventBasedNetListener listener;
@@ -37,51 +36,60 @@ public class GameRover : Game
     const int maxFeedbackMsgTime = 300;
     int successFeedbackMsgTime = 0;
     int failFeedbackMsgTime = 0;
-    string mcText = "";
+    int recvdFeedbackMsgTime = 0;
     List<CodeObject> codeObjects;
     List<bool> randomCode;
     Texture2D correspondingCodeTexture;
     List<BoolBox> codeInputObjects = [];
     SolidRect codeMovingBlock;
     int codeBlockTimer = 0;
+    SolidPlatform powerMovingPlatform = new SolidPlatform(1033,570,150);
+    PowerSystem powerSystem;
+    ExitDoor exitDoor;
+    bool isIntro = true;
+    WordContainer wordContainer;
+    Texture2D unstablePlatformSign, noEnergyLiftSign;
 
     GumService GumUI => GumService.Default;
 
     public GameRover() {
-        Console.WriteLine("sojourner initiated");
-        
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        // screenWidth = _graphics.PreferredBackBufferWidth;
-        // screenHeight = _graphics.PreferredBackBufferHeight;
-        // Console.WriteLine($"{screenWidth} {screenHeight}");
         screenWidth = 1200;
         screenHeight = 800;
         _graphics.PreferredBackBufferWidth = screenWidth;
         _graphics.PreferredBackBufferHeight = screenHeight;
 
-        // server
-        listener = new EventBasedNetListener();
-        client = new NetManager(listener);
-        client.Start();
-        client.Connect("localhost", 9050, "sojourner");
-        listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) => {
-            mcText = dataReader.GetString(300);
-            dataReader.Recycle();
-        };
-
         LoadDict();
+    }
+
+    private void HandleMissionControlMessage(NetPacketReader dataReader) {
+        string text = dataReader.GetString(300);
+        switch (text.Split(' ')[0]) {
+            case "message": 
+                recvdFeedbackMsgTime = maxFeedbackMsgTime;
+                wordContainer.NewMessage(text[8..].Split(' ').ToList());
+                break;
+            case "startpulse":
+                exitDoor.UpdatePulse(true);
+                break;
+            case "endpulse":
+                exitDoor.UpdatePulse(false);
+                break;
+        }
+        dataReader.Recycle();
     }
 
     private void MakeMap() {
         codeMovingBlock = new SolidRect(883,570,150,100);
 
         solids = new() {
-            new SolidRect(-3000,770,4000,30), // ground
-            new SolidRect(883,670,150,100),  // block after code entry below
+            new SolidRect(-3000,770,6000,30), // ground
+            new SolidRect(883,670,300,100),  // block after code entry below
             new SolidRect(883,0,150,570),    // block after code entry above
             codeMovingBlock,
+            new SolidRect(1183,570,700,200), // block after moving platform
         };
 
         triangles = new() {
@@ -90,6 +98,7 @@ public class GameRover : Game
 
         platforms = new() {
             new SolidPlatform(500,670,383), // code platform
+            powerMovingPlatform,
         };
     }
 
@@ -101,15 +110,13 @@ public class GameRover : Game
                 words.Add(w.ToLower());
             }
         }
-
     }
     
     private void SendToMissionControl() {
         List<string> ws = new List<string>();
         foreach (var w in tbToMc.Text.Split(' ')) {
-            // Console.WriteLine($"the word: {w.ToLower()}, isvalid: {words.Contains(w)}");
             if (w.Length>0) {
-                if (words.Contains(w)) {
+                if (words.Contains(w.ToLower())) {
                     ws.Add(w.ToLower());
                 } else {
                     failFeedbackMsgTime=maxFeedbackMsgTime;
@@ -120,7 +127,7 @@ public class GameRover : Game
 
         tbToMc.Text="";
         successFeedbackMsgTime=maxFeedbackMsgTime;
-        Send(string.Join(' ', ws));
+        Send("message " + string.Join(' ', ws));
     }
 
     protected override void Initialize() {
@@ -155,72 +162,9 @@ public class GameRover : Game
     }
 
     protected void LoadUnstablePlatforms() {
-        const int initx = -200, inity = 770, unitSize = 25;
+        int initx = PlatformData.initx, inity = PlatformData.inity, unitSize = PlatformData.unitSize;
 
-        List<((int,int),(int,int))> xsysplatforms = [
-            ((5,5),(20,5)),
-            ((60,5),(80,5)),
-            ((-5,10),(15,10)),
-            ((45,10),(55,10)),
-            ((75,10),(95,10)),
-            ((20,15),(40,15)),
-            ((50,15),(55,15)),
-            ((70,15),(75,15)),
-            ((80,15),(95,15)),
-            ((10,20),(15,20)),
-            ((40,20),(50,20)),
-            ((60,20),(65,20)),
-            ((80,20),(100,20)),
-            ((45,25),(100,25)),
-            ((105,20),(110,20))
-        ];
-
-        List<((int,int),(int,int))> xsystriangles = [
-            ((0,0),(5,5)),
-            ((5,5),(0,10)),
-            ((-2,10),(10,20)),
-            ((15,20),(20,25)),
-            ((15,10),(20,15)),
-            ((20,5),(25,10)),
-            ((20,20),(25,15)),
-            ((40,15),(50,5)),
-            ((45,25),(50,20)),
-            ((45,20),(50,15)),
-            ((55,15),(60,20)),
-            ((55,10),(60,15)),
-            ((55,10),(60,5)),
-            ((65,20),(70,15)),
-            ((65,5),(70,10)),
-            ((75,15),(80,20)),
-            ((80,5),(85,10)),
-            ((85,15),(90,10)),
-            ((95,15),(100,20)),
-            ((95,10),(100,15)),
-            ((100,25),(105,20))
-        ];
-
-        List<((int,int),(int,int))> xsysplatformsfake = [
-            // ((50,5),(60,5)),
-            ((15,10),(25,10)),
-            // ((70,10),(75,10)),
-            // ((60,15),(70,15)),
-            // ((95,15),(100,15)),
-            // ((15,20),(40,20)),
-            // ((50,20),(60,20)),
-            // ((100,20),(105,20)),
-            // ((20,25),(45,25)),
-        ];
-
-        List<((int,int),(int,int))> xsystrianglesfake = [
-            ((25,10),(30,15)),
-            ((50,10),(55,15)),
-            ((60,25),(65,20)),
-            ((70,15),(80,5)),
-            ((75,25),(80,20)),
-            ((100,15),(105,20)),
-        ];
-
-        platforms.AddRange(xsysplatforms.Select(coords => {
+        platforms.AddRange(PlatformData.xsysplatforms.Select(coords => {
             int x1 = initx - unitSize*coords.Item1.Item1;
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
@@ -228,7 +172,7 @@ public class GameRover : Game
             return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2));
         }));
 
-        platforms.AddRange(xsysplatformsfake.Select(coords => {
+        platforms.AddRange(PlatformData.xsysplatformsfake.Select(coords => {
             int x1 = initx - unitSize*coords.Item1.Item1;
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
@@ -236,7 +180,7 @@ public class GameRover : Game
             return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2), true);
         }));
 
-        triangles.AddRange(xsystriangles.Select(coords => {
+        triangles.AddRange(PlatformData.xsystriangles.Select(coords => {
             int x1 = initx - unitSize*coords.Item1.Item1;
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
@@ -255,7 +199,7 @@ public class GameRover : Game
             return new SolidTriangle(x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2);
         }));
 
-        triangles.AddRange(xsystrianglesfake.Select(coords => {
+        triangles.AddRange(PlatformData.xsystrianglesfake.Select(coords => {
             int x1 = initx - unitSize*coords.Item1.Item1;
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
@@ -275,18 +219,36 @@ public class GameRover : Game
         }));
     }
 
+    private void StartClient() {
+        listener = new EventBasedNetListener();
+        client = new NetManager(listener);
+        client.Start();
+        client.Connect("localhost", 9050, "sojourner");
+        listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) => {
+            HandleMissionControlMessage(dataReader);
+        };
+    }
+
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // text
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         font = Content.Load<SpriteFont>("Cantarell");
+
+        noEnergyLiftSign = Content.Load<Texture2D>("images/broken-lift-sign");
+        unstablePlatformSign = Content.Load<Texture2D>("images/unstable-platforms-sign");
         InitGumUI();
 
+        powerSystem = new PowerSystem(powerMovingPlatform, Content);
+        exitDoor    = new ExitDoor(Content,1350,570);
+        wordContainer = new WordContainer((int)(screenWidth*gameProportion+10), 280, (int)(screenWidth*(1-gameProportion)-20),screenHeight-280-10,font);
         LoadCode();
         MakeMap();
         LoadUnstablePlatforms();
-        rover = new Rover(solids, triangles, platforms);
+        rover = new Rover(solids, triangles, platforms, Content);
+
+        StartClient();
     }
 
     private void CheckCode() {
@@ -314,29 +276,46 @@ public class GameRover : Game
             Exit();
         }
 
-        xoffset = (int)(rover.Update()-screenWidth*gameProportion/2);
+
+        xoffset = (int)(rover.Update(!tbToMc.IsFocused)-screenWidth*gameProportion/2);
         codeInputObjects.ForEach(e => e.Update(rover));
+        Send($"position {rover.x} {rover.y+rover.height}");
         CheckCode();
+        powerSystem.Update(rover);
+        exitDoor.Update(rover);
 
         GumUI.Update(gameTime);
         base.Update(gameTime);
     }
 
+    private void DrawRandomSigns() {
+        _spriteBatch.Draw(noEnergyLiftSign, new Vector2(1033-xoffset,370), Color.White);
+        _spriteBatch.Draw(unstablePlatformSign, new Vector2(-90-xoffset,770-118), Color.White);
+    }
+
     private void DrawGameScreen() {
-        rover.Draw(_spriteBatch, (int)(screenWidth*gameProportion));
         foreach (SolidRect s in solids) {
             s.Draw(_spriteBatch, xoffset);
         }
         foreach (SolidTriangle s in triangles) {
             s.Draw(_spriteBatch, xoffset);
         }
+        
+        DrawRandomSigns();
         foreach (SolidPlatform s in platforms) {
             s.Draw(_spriteBatch, xoffset);
         }
 
+
         // code display
         codeInputObjects.ForEach(e=>e.Draw(_spriteBatch, xoffset));
         _spriteBatch.Draw(correspondingCodeTexture, new Vector2(510-xoffset,578), Color.White);
+
+        powerSystem.Draw(_spriteBatch,xoffset);
+        exitDoor.Draw(_spriteBatch, xoffset);
+
+        rover.Draw(_spriteBatch, (int)(screenWidth*gameProportion));
+
     }
 
     private void InitGumUI() {
@@ -371,15 +350,17 @@ public class GameRover : Game
 
         // feedback msgs
         if (successFeedbackMsgTime-->0) {
-            _spriteBatch.DrawString(font, "Message sent!", new Vector2(initx+10, 230), Color.Green);
+            _spriteBatch.DrawString(font, "Message sent!", new Vector2(initx+10, 230), Color.Green*(successFeedbackMsgTime/(float)maxFeedbackMsgTime));
             failFeedbackMsgTime = 0;
         } else if (failFeedbackMsgTime-->0) {
-            _spriteBatch.DrawString(font, "Message must be valid English words", new Vector2(initx+10, 230), Color.Red);
+            _spriteBatch.DrawString(font, "Message must be valid English words", new Vector2(initx+10, 230), Color.Red*(failFeedbackMsgTime/(float)maxFeedbackMsgTime));
         }
 
-        _spriteBatch.DrawString(font, "Messages from mission control:", new Vector2(initx+10, 255), Color.Black);
+        if (recvdFeedbackMsgTime-->0) {
+            _spriteBatch.DrawString(font, "New message from mission control:", new Vector2(initx+10, 255), Color.Black*(recvdFeedbackMsgTime/(float)maxFeedbackMsgTime));
+        }
 
-        _spriteBatch.DrawString(font, mcText, new Vector2(initx+10, 280), Color.Black);
+        wordContainer.Draw(_spriteBatch);
     }
 
     protected override void Draw(GameTime gameTime) {

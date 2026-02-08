@@ -1,0 +1,124 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace sojourner;
+
+class Line {
+    Vector2 startPos;
+    float rotation;
+    Texture2D texture;
+    Vector2 origin;
+
+    public Line(Vector2 p1, Vector2 p2, GraphicsDevice graphicsDevice) {
+        this.startPos = p1;
+        (this.texture, this.rotation, this.origin) = MakeLineBetween(graphicsDevice, p1, p2, 2);
+    }
+
+    private (Texture2D, float, Vector2) MakeLineBetween(
+        GraphicsDevice graphicsDevice,
+        Vector2 startPos,
+        Vector2 endPos,
+        int thickness
+    ) {
+        // Create a texture as wide as the distance between two points and as high as
+        // the desired thickness of the line.
+        var distance = (int)Vector2.Distance(startPos, endPos);
+        var texture = new Texture2D(graphicsDevice, distance, thickness);
+
+        // Fill texture with given color.
+        var data = new Color[distance * thickness];
+        for (int i = 0; i < data.Length; i++) {
+            data[i] = Color.LightGray;
+        }
+        texture.SetData(data);
+
+        // Rotate about the beginning middle of the line.
+        var rotation = (float)Math.Atan2(endPos.Y - startPos.Y, endPos.X - startPos.X);
+        var origin = new Vector2(0, thickness / 2);
+
+        return (texture, rotation, origin);
+    }
+
+    public void Draw(SpriteBatch spriteBatch) {
+        spriteBatch.Draw(
+            texture,
+            startPos,
+            null,
+            Color.White,
+            rotation,
+            origin,
+            1.0f,
+            SpriteEffects.None,
+            1.0f
+        );
+    }
+}
+
+public class UpdatingMap {
+    int x,y;
+    float width,height;
+    float unit;
+    Texture2D roverTexture, warningTexture;
+    List<Line> lines;
+    float pixelsperunit;
+
+    public UpdatingMap(int x, int y, int width, int height, ContentManager Content, GraphicsDevice graphicsDevice) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.roverTexture = Content.Load<Texture2D>("images/rover");
+        this.warningTexture = Content.Load<Texture2D>("images/warning");
+
+        pixelsperunit = float.PositiveInfinity;
+        foreach (var item in PlatformData.All()) {
+            float pixelsperunitx = width/(float)Math.Max(item.Item1.Item1, item.Item2.Item1);
+            float pixelsperunity = height/(float)Math.Max(item.Item1.Item2, item.Item2.Item2);
+            pixelsperunit = Math.Min(pixelsperunit, Math.Min(pixelsperunitx,pixelsperunity));
+        }
+
+        lines = [];
+        foreach (var item in PlatformData.All()) {
+            int x1 = ComputeX(item.Item1.Item1);
+            int y1 = ComputeY(item.Item1.Item2);
+            int x2 = ComputeX(item.Item2.Item1);
+            int y2 = ComputeY(item.Item2.Item2);
+            lines.Add(new Line(new Vector2(x1,y1), new Vector2(x2,y2), graphicsDevice));
+        }
+    }
+
+    private int ComputeX(int x) {
+        return (int) (x+width - x * pixelsperunit);
+    }
+
+    private int ComputeY(int y) {
+        return (int) (y+width - y * pixelsperunit);
+    }
+
+    public void Draw(SpriteBatch spriteBatch) {
+        foreach (Line line in lines) {
+            line.Draw(spriteBatch);
+        }
+
+        Action<((int,int),(int,int))> drawWarningSign = item => {
+            int x1 = ComputeX(item.Item1.Item1);
+            int y1 = ComputeY(item.Item1.Item2);
+            int x2 = ComputeX(item.Item2.Item1);
+            int y2 = ComputeY(item.Item2.Item2);
+            int midX = (x1+x2)/2;
+            int midY = (y1+y2)/2;
+            spriteBatch.Draw(warningTexture, new Vector2(midX-warningTexture.Width/2, midY-warningTexture.Height/2), Color.White);
+        };
+
+        foreach (var item in PlatformData.xsysplatformsfake) {
+            drawWarningSign(item);
+        }
+
+        foreach (var item in PlatformData.xsystrianglesfake) {
+            drawWarningSign(item);
+        }
+    }
+}

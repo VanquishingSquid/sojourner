@@ -45,3 +45,17 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/square.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/star.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/triangle.xnb
+/home/filk/programming/sojourner/obj/Debug/net9.0/sojourner.sourcelink.json
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/intro-manual.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/pulse-manual.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/spinning-earth.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/spinning-earth2.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/charger.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/exit.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/exit-open.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/rover.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/warning.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/switch-off.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/switch-on.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/broken-lift-sign.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/unstable-platforms-sign.xnb

@@ -18,7 +18,7 @@ using System.Linq;
 namespace sojourner;
 
 public enum Screen {
-    CodeManual
+    CodeManual, PulseDiagram, PlatformMap, Intro
 }
 
 public class GameControl : Game {
@@ -30,15 +30,18 @@ public class GameControl : Game {
     int screenWidth, screenHeight;
     const float gameProportion = 0.75f;
     List<MCButton> ws = [];
-    WordContainer toSendWs;
+    ButtonContainer toSendWs;
     int wordButtonStartX;
     const int topWordButtonStartY=35;
-    const int botWordButtonStartY=235;
+    const int botWordButtonStartY=350;
     const int yWordSep=25;
     const int xWordSep=5;
     Texture2D codeManualTexture;
-    Screen displayScreen = Screen.CodeManual;
+    Screen displayScreen = Screen.PlatformMap;
     List<MCButton> headerButtons;
+    PulseHandler pulseHandler;
+    IntroHandler introHandler;
+    UpdatingMap updatingMap;
     
     GumService GumUI => GumService.Default;
 
@@ -46,22 +49,12 @@ public class GameControl : Game {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        screenWidth = _graphics.PreferredBackBufferWidth;
-        screenHeight = _graphics.PreferredBackBufferHeight;
+        screenWidth = 1200;
+        screenHeight = 800;
+        _graphics.PreferredBackBufferWidth = screenWidth;
+        _graphics.PreferredBackBufferHeight = screenHeight;
+
         wordButtonStartX = (int)(screenWidth*gameProportion)+10;
-        Console.WriteLine(screenHeight);
-        
-        // server stuff
-        listener = new EventBasedNetListener();
-        server = new NetManager(listener);
-        server.Start(9050);
-        listener.ConnectionRequestEvent += request => {
-            request.AcceptIfKey("sojourner");
-        };
-        listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) => {
-            HandleRoverMsg(dataReader.GetString(500));
-            dataReader.Recycle();
-        };
     }
 
     private void HandleRoverMsg(string s) {
@@ -73,7 +66,7 @@ public class GameControl : Game {
 
         for (int i=0;i<newws.Count;i++) {
             string w = newws[i];
-            MCButton btn = new(wx,wy,w,()=>{toSendWs.AddButton(w);}, font);
+            MCButton btn = new(wx,wy,w,()=>{toSendWs.AddButton(w);}, font,1f);
 
             if (wx+btn.width>screenWidth-10) {
                 wx=wordButtonStartX;
@@ -94,16 +87,59 @@ public class GameControl : Game {
         base.Initialize();
     }
 
+    private void LoadHeaderButtons() {
+        headerButtons = [
+            new MCButton(0,0,"intro screen",()=>{displayScreen=Screen.Intro;}, font),
+            new MCButton(0,0,"code manual",()=>{displayScreen=Screen.CodeManual;}, font),
+            new MCButton(0,0,"pulse diagram", ()=>{displayScreen=Screen.PulseDiagram;}, font),
+            new MCButton(0,0,"platform map", ()=>{displayScreen=Screen.PlatformMap;}, font),
+        ];
+
+        int pos = 20;
+        foreach (var item in headerButtons) {
+            item.UpdateX(pos);
+            item.UpdateY(20);
+            pos += item.width + 20;
+        }
+    }
+
+    private void LoadServer() {
+        listener = new EventBasedNetListener();
+        server = new NetManager(listener);
+        server.Start(9050);
+        listener.ConnectionRequestEvent += request => {
+            request.AcceptIfKey("sojourner");
+        };
+        listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod, channel) => {
+            string text = dataReader.GetString(500);
+            switch (text.Split(' ')[0]) {
+                case "message":
+                    HandleRoverMsg(text[8..]);
+                    break;
+                case "position":
+                    string[] split = text.Split(' ');
+                    updatingMap.UpdateRoverPos(Convert.ToInt32(split[1]),Convert.ToInt32(split[2]));
+                    break;
+            }
+            dataReader.Recycle();
+        };
+    }
+
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         font = Content.Load<SpriteFont>("Cantarell");
-        toSendWs = new WordContainer(wordButtonStartX, botWordButtonStartY, screenWidth-10-wordButtonStartX, 150, font, yWordSep, xWordSep);
+        toSendWs = new ButtonContainer(wordButtonStartX, botWordButtonStartY, screenWidth-10-wordButtonStartX, 360, font, yWordSep, xWordSep);
         InitGumUI();
         codeManualTexture = Content.Load<Texture2D>("images/code-manual");
 
-        headerButtons = [
-            new MCButton(0,0,"code manual",()=>{displayScreen=Screen.CodeManual;}, font)
-        ];
+        LoadHeaderButtons();
+        
+        introHandler = new IntroHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
+        pulseHandler = new PulseHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
+        int padding=20;
+        updatingMap  = new UpdatingMap(padding,screenHeight-720-padding,(int)(screenWidth*gameProportion)-2*padding,720-2*padding,Content,GraphicsDevice);
+
+        LoadServer();
     }
 
     protected void Send(string s) {
@@ -120,14 +156,21 @@ public class GameControl : Game {
             Exit();
         }
 
-        if (Kb.IsTapped(Ks.Left)) {
-            HandleRoverMsg("banana pirate skibidi orange xkcd");
-        }
+        // if (Kb.IsTapped(Ks.Left)) {
+        //     HandleRoverMsg("banana pirate skibidi orange xkcd");
+        // }
 
         foreach (var w in ws) {
             w.Update();
         }
         toSendWs.Update();
+
+        foreach (var btn in headerButtons) {
+            btn.Update();
+        }
+
+        pulseHandler.Update(Send);
+        introHandler.Update();
 
         GumUI.Update(gameTime);
         base.Update(gameTime);
@@ -144,24 +187,28 @@ public class GameControl : Game {
             case Screen.CodeManual:
                 _spriteBatch.Draw(codeManualTexture, new Vector2(0,screenHeight-400), Color.White);
                 break;
+
+            case Screen.PlatformMap:
+                updatingMap.Draw(_spriteBatch);
+                break;
+
+            case Screen.PulseDiagram:
+                pulseHandler.Draw(_spriteBatch);
+                break;
+
+            case Screen.Intro:
+                introHandler.Draw(_spriteBatch);
+                break;
         }
     }
 
     private void InitGumUI() {
         GumUI.Initialize(this, DefaultVisualsVersion.V3);
-        // tbToMc = new TextBox();
-        // tbToMc.AddToRoot();
-        // tbToMc.X = (int)(screenWidth*gameProportion+10);
-        // tbToMc.Y = 10;
-        // tbToMc.Width = (int)(screenWidth*(1-gameProportion)-20);
-        // tbToMc.Height = 150;
-        // tbToMc.TextWrapping = TextWrapping.Wrap;
-        // tbToMc.Text = "Send data to mission control here...";
 
         Button button = new Button();
         button.AddToRoot();
         button.X = (int)(screenWidth*gameProportion+10);
-        button.Y = toSendWs.y + toSendWs.height + toSendWs.ydelta;
+        button.Y = screenHeight - 80;
         button.Width = (int)(screenWidth*(1-gameProportion)-20);
         button.Height = 20;
         button.Text = "Send data";

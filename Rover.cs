@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using RenderingLibrary.Content;
 
 namespace sojourner;
 
 public class Rover {
     public int width, height, x, y, lastx, lasty;
-    const int speed = 2;
+    const int speed = 3;
     List<SolidRect> solids;
     List<SolidTriangle> triangles;
     List<bool> trianglesColl;
@@ -21,8 +23,10 @@ public class Rover {
     int leeway = 3;
     int maxdeactivationtime = 5;
     int deactivationtime = 0;
+    bool isfacingleft = false;
+    Texture2D texture;
 
-    public Rover(List<SolidRect> solids, List<SolidTriangle> triangles, List<SolidPlatform> platforms) {
+    public Rover(List<SolidRect> solids, List<SolidTriangle> triangles, List<SolidPlatform> platforms, ContentManager Content) {
         x = lastx = 0;
         y = lasty = 0;
         width=32;
@@ -31,18 +35,28 @@ public class Rover {
         this.triangles = triangles;
         this.platforms = platforms;
         trianglesColl = new bool[triangles.Count].ToList();
+        this.texture = Content.Load<Texture2D>("images/rover");
     }
 
-    private void Move() {
+    private void Move(bool canMove) {
         // player controlled movement
-        if (Kb.IsDown(Ks.Left)) {
-            x-=speed;
-        } else if (Kb.IsDown(Ks.Right)) {
-            x+=speed;
+        if (canMove) {
+            if (Kb.IsDown(Ks.Left)) {
+                x-=speed;
+            } else if (Kb.IsDown(Ks.Right)) {
+                x+=speed;
+            }
+            
+            if (Kb.IsTapped(Ks.Down)) {
+                deactivationtime=Math.Max(deactivationtime,maxdeactivationtime);
+            }
         }
-        
-        if (Kb.IsDown(Ks.Down)) {
-            deactivationtime=Math.Max(deactivationtime,maxdeactivationtime);
+
+        // face to the left or right
+        if (lastx<x) {
+            isfacingleft = false;
+        } else if (x<lastx) {
+            isfacingleft = true;
         }
 
         // falling
@@ -178,8 +192,8 @@ public class Rover {
         }
     }
 
-    public int Update() {
-        Move();
+    public int Update(bool canMove) {
+        Move(canMove);
         Collide();
 
         deactivationtime = (int)Math.Max(deactivationtime-1, 0);
@@ -191,6 +205,7 @@ public class Rover {
 
     public void Draw(SpriteBatch _spriteBatch, int screenWidth) {
         // Console.WriteLine($"{x}, {y}");
-        _spriteBatch.FillRectangle(new Rectangle(screenWidth/2-width/2,y,width,height), Color.Red);
+        // _spriteBatch.FillRectangle(new Rectangle(screenWidth/2-width/2,y,width,height), Color.Red);
+        _spriteBatch.Draw(texture, new Vector2(screenWidth/2-width/2,y+height-texture.Height), null, Color.White, 0f, Vector2.Zero, 1f, isfacingleft ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
     }
 }

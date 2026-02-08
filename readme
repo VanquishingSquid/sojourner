@@ -1,0 +1,3 @@
+xsel-1.2.1-8.fc42.x86_64
+dotnet add package LiteNetLib --version 2.0.1
+

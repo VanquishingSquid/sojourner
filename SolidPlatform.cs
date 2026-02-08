@@ -23,6 +23,6 @@ public class SolidPlatform {
     }
 
     public void Draw(SpriteBatch _spriteBatch, int xoffset) {
-        _spriteBatch.FillRectangle(new Rectangle(x-xoffset,y,width,height), fake ? Color.Gray : Color.LightGray);
+        _spriteBatch.FillRectangle(new Rectangle(x-xoffset,y,width,height), fake ? Color.LightGray : Color.LightGray);
     }
 }

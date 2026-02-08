@@ -30,14 +30,19 @@ public class SolidTriangle {
     }
 
     public void Draw(SpriteBatch _spriteBatch, int xoffset) {
-        Vector2 toppointlocal = isslopeleft ? new Vector2(0, 0) : new Vector2(width, 0);
-        Vector2[] trianglePoints = [
-            new Vector2(width, height),
-            new Vector2(0, height),
-            toppointlocal,
-        ];
+        // Vector2 toppointlocal = isslopeleft ? new Vector2(0, 0) : new Vector2(width, 0);
+        // Vector2[] trianglePoints = [
+        //     new Vector2(width, height),
+        //     new Vector2(0, height),
+        //     toppointlocal,
+        // ];
+        int x1=x;
+        int y1=isslopeleft ? y : y+height;
+        int x2=x+width;
+        int y2=isslopeleft ? y+height : y;
 
-        _spriteBatch.DrawPolygon(new Vector2(x-xoffset, y), trianglePoints, fake ? Color.Gray : Color.LightGray, 3f);
+        // _spriteBatch.DrawPolygon(new Vector2(x-xoffset, y), trianglePoints, fake ? Color.LightGray : Color.LightGray, 3f);
+        _spriteBatch.DrawLine(x1-xoffset,y1,x2-xoffset,y2,Color.LightGray,6f,0f);
     }
 
     public Vector2? IntersectionPoint(Vector2 p1, Vector2 p2) {
