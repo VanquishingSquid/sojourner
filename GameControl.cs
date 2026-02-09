@@ -66,19 +66,21 @@ public class GameControl : Game {
     }
 
     private void LoadHeaderButtons() {
+        float scale = 1.5f;
+        Texture2D buttontexture = Content.Load<Texture2D>("images/header-button");
         headerButtons = [
-            new MCButton(0,0,"intro screen",()=>{displayScreen=Screen.Intro;}, font, 2f),
-            new MCButton(0,0,"code manual",()=>{displayScreen=Screen.CodeManual;}, font, 2f),
-            new MCButton(0,0,"pulse diagram", ()=>{displayScreen=Screen.PulseDiagram;}, font, 2f),
-            new MCButton(0,0,"platform map", ()=>{displayScreen=Screen.PlatformMap;}, font, 2f),
+            new MCButton(0,0,"Intro Screen",()=>{displayScreen=Screen.Intro;}, font, 1.5f, buttontexture),
+            new MCButton(0,0,"Code Manual",()=>{displayScreen=Screen.CodeManual;}, font, 1.5f, buttontexture),
+            new MCButton(0,0,"Pulse Diagram", ()=>{displayScreen=Screen.PulseDiagram;}, font, 1.5f, buttontexture),
+            new MCButton(0,0,"Platform Map", ()=>{displayScreen=Screen.PlatformMap;}, font, 1.5f, buttontexture),
         ];
 
         int padding = 10;
         int width = (int)(screenWidth*gameProportion/4f);
         for (int i = 0; i < headerButtons.Count; i++) {
             var item = headerButtons[i];
-            item.UpdateX(padding/2+i*width);
-            item.UpdateY(padding/2);
+            item.UpdateX(padding/2+i*width-2);
+            item.UpdateY(padding/2-2);
             item.width = width-padding;
             item.height = 80-padding;
             item.CenterText();
@@ -110,7 +112,7 @@ public class GameControl : Game {
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         font = Content.Load<SpriteFont>("Corptic DEMO");
-        toSendWs = new SendButtonContainer(wordButtonStartX, botWordButtonStartY, screenWidth-10-wordButtonStartX, 315, font, yWordSep, xWordSep);
+        toSendWs = new SendButtonContainer(wordButtonStartX, botWordButtonStartY+20, screenWidth-10-wordButtonStartX, 295, font, yWordSep, xWordSep);
         receivedWs = new RecvButtonContainer(wordButtonStartX, 40, screenWidth-10-wordButtonStartX, botWordButtonStartY-80, font, yWordSep, xWordSep, toSendWs);
         InitGumUI();
         codeManualTexture = Content.Load<Texture2D>("images/code-manual");
@@ -155,6 +157,7 @@ public class GameControl : Game {
 
     private void DrawGameScreen() {
         // draw headers
+        _spriteBatch.FillRectangle(0,0,gameProportion*screenWidth,80,Color.Gray);
         foreach (var btn in headerButtons) {
             btn.Draw(_spriteBatch, font);
         }
@@ -177,12 +180,15 @@ public class GameControl : Game {
                 introHandler.Draw(_spriteBatch);
                 break;
         }
+
+        // draw header separator last bc it overflows everyth else a lil 
+        _spriteBatch.FillRectangle(0,78,gameProportion*screenWidth,4,new Color(40,40,40));
     }
 
     private void InitGumUI() {
         GumUI.Initialize(this, DefaultVisualsVersion.V3);
 
-        ButtonVisual button = new ButtonVisual();
+        Button button = new Button();
         button.AddToRoot();
         button.X = (int)(screenWidth*gameProportion+10);
         button.Y = screenHeight - 95;
@@ -191,8 +197,7 @@ public class GameControl : Game {
         button.Click += (_,_) => {
             SendToRover();
         };
-        TextRuntime text = button.TextInstance;
-        text.Text = "Send data";
+        button.Text = "Send data";
         // text.Font = 
         // button.Text = "Send data";
 
@@ -225,7 +230,7 @@ public class GameControl : Game {
         _spriteBatch.FillRectangle(new Rectangle(initx, 0, width, screenHeight), Color.White);
 
         _spriteBatch.DrawString(font, "Incoming words:", new Vector2(initx+10, 10), Color.Black);
-        _spriteBatch.DrawString(font, "Select above words to send back:", new Vector2(initx+10,botWordButtonStartY-25), Color.Black);
+        _spriteBatch.DrawString(font, "Select above words\nto send back", new Vector2(initx+10,botWordButtonStartY-25), Color.Black);
 
         if (feedbackMsgTime-->0) {
             _spriteBatch.DrawString(font, "Message sent!", new Vector2(initx+10,screenHeight-35), Color.Green*(feedbackMsgTime/(float)maxFeedbackMsgTime));
@@ -233,6 +238,10 @@ public class GameControl : Game {
 
         receivedWs.Draw(_spriteBatch);
         toSendWs.Draw(_spriteBatch);
+
+        // separator to rest of game
+        _spriteBatch.FillRectangle(gameProportion*screenWidth-1,0,4,screenHeight,new Color(40,40,40));
+
     }
 
     protected override void Draw(GameTime gameTime) {

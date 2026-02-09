@@ -32,7 +32,7 @@ public class MCIntroHandler {
         
         spriteBatch.Draw(
             earthTexture,
-            new Vector2(x+width-60, y+height-60),
+            new Vector2(x+770, y+42),
             new Rectangle(0,48*(int)earthFrame,48,48),
             Color.White
         );

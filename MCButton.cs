@@ -12,8 +12,9 @@ public class MCButton {
     int textx,texty,textwidth,textheight;
     public string text;
     float scale;
+    Texture2D? texture;
 
-    public MCButton(int x, int y, string text, Action f, SpriteFont font, float scale=0.75f) {
+    public MCButton(int x, int y, string text, Action f, SpriteFont font, float scale=0.75f, Texture2D? texture=null) {
         this.x = x;
         this.y = y;
         this.text = text;
@@ -28,6 +29,8 @@ public class MCButton {
         this.texty = y;
         this.textwidth = width;
         this.textheight = height;
+
+        this.texture = texture;
     }
 
     public void UpdateX(int x) {
@@ -56,7 +59,12 @@ public class MCButton {
     }
 
     public void Draw(SpriteBatch _spriteBatch, SpriteFont font) {
-        _spriteBatch.FillRectangle(new RectangleF(x,y,width,height), Color.Beige);
+        if (texture is Texture2D t) {
+            _spriteBatch.Draw(t, new Vector2(x,y), Color.White);
+        } else {
+            _spriteBatch.FillRectangle(new RectangleF(x,y,width,height), Color.Beige);
+        }
+
         _spriteBatch.DrawString(font, text, new Vector2(textx,texty), Color.Black, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 }

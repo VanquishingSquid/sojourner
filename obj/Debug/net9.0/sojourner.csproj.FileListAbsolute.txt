@@ -65,3 +65,5 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/moving-platform.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/lift-off.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/lift-on.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/header-button.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/platform-map.xnb

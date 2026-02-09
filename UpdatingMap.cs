@@ -11,7 +11,7 @@ public class UpdatingMap {
     int x,y;
     float width,height;
     int minx,maxx,miny,maxy;
-    Texture2D roverTexture, warningTexture;
+    Texture2D roverTexture, warningTexture,bgTexture;
     List<((int,int),(int,int))> lines;
     float pixelsperunit;
     int roverx=0, rovery=0;
@@ -24,6 +24,7 @@ public class UpdatingMap {
         this.height = height;
         this.roverTexture = Content.Load<Texture2D>("images/rover");
         this.warningTexture = Content.Load<Texture2D>("images/warning");
+        this.bgTexture = Content.Load<Texture2D>("images/platform-map");
 
         minx = int.MaxValue;
         maxx = int.MinValue;
@@ -71,9 +72,11 @@ public class UpdatingMap {
     }
 
     public void Draw(SpriteBatch spriteBatch) {
+        spriteBatch.Draw(bgTexture, new Vector2(x-20,y+20), Color.White);
+
         // the actual platform map
         foreach (var line in lines) {
-            spriteBatch.DrawLine(line.Item1.Item1, line.Item1.Item2, line.Item2.Item1, line.Item2.Item2, Color.LightGray, 3);
+            spriteBatch.DrawLine(line.Item1.Item1, line.Item1.Item2, line.Item2.Item1, line.Item2.Item2, Color.Gray, 3);
         }
 
         // the rover

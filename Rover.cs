@@ -23,11 +23,11 @@ public class Rover {
     int leeway = 3;
     int maxdeactivationtime = 5;
     int deactivationtime = 0;
-    bool isfacingleft = false;
+    bool isfacingleft = true;
     Texture2D texture;
 
     public Rover(List<SolidRect> solids, List<SolidTriangle> triangles, List<SolidPlatform> platforms, ContentManager Content) {
-        x = lastx = 1500;
+        x = lastx = 0;
         y = lasty = 0;
         width=32;
         height=width;
