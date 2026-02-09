@@ -59,3 +59,9 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/switch-on.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/broken-lift-sign.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/unstable-platforms-sign.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/Corptic DEMO.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/intro-screen.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/rover-gif.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/moving-platform.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/lift-off.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/lift-on.xnb

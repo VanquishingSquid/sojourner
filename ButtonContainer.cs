@@ -7,13 +7,15 @@ using System.Collections.Generic;
 
 namespace sojourner;
 
-public class ButtonContainer {
+public abstract class ButtonContainer {
     public int x,y,width,height,xw,yw,ydelta,xdelta;
-    List<MCButton> btns = [];
+    protected List<MCButton> btns = [];
     const float scale = 1f;
     SpriteFont font;
+    protected Color color = Color.Blue;
+    protected Action<int> onClick;
 
-    public ButtonContainer(int x, int y, int width, int height, SpriteFont font, int ydelta, int xdelta) {
+    public ButtonContainer(int x, int y, int width, int height, SpriteFont font, int ydelta, int xdelta, Action<int> onClick) {
         this.x = x;
         this.y = y;
         this.xw = x;
@@ -23,6 +25,7 @@ public class ButtonContainer {
         this.font = font;
         this.ydelta = ydelta;
         this.xdelta = xdelta;
+        this.onClick = onClick;
     }
 
     public void Update() {
@@ -39,7 +42,7 @@ public class ButtonContainer {
 
     public void AddButton(string w) {
         int n = btns.Count;
-        MCButton btn = new(xw,yw,w,()=>{RemoveButton(n);},font,scale);
+        MCButton btn = new(xw,yw,w,()=>{onClick(n);},font,scale);
 
         if (xw+btn.width>x+width) {
             if (yw+2*ydelta>y+height) {
@@ -57,36 +60,8 @@ public class ButtonContainer {
         btns.Add(btn);
     }
 
-    public void RemoveButton(int i) {
-        List<MCButton> tmps = [];
-        for (int j=i+1;j<btns.Count;j++) {
-            tmps.Add(btns[j]);
-        }
-
-        List<MCButton> tmps2 = btns.GetRange(0,i);
-        btns = [];
-
-        // reset xw and yw
-        xw = x;
-        yw = y;
-    
-        tmps.AddRange(tmps2);
-        foreach (var btn in tmps) {
-            AddButton(btn.text);
-        }
-    }
-
-    public string CreateMessage() {
-        string t = "message ";
-        foreach (var btn in btns) {
-            t += btn.text + " ";
-        }
-        btns = [];
-        return t;
-    }
-
     public void Draw(SpriteBatch _spriteBatch) {
-        _spriteBatch.FillRectangle(new RectangleF(x,y,width,height),Color.Blue*0.5f);
+        _spriteBatch.FillRectangle(new RectangleF(x,y,width,height),color*0.5f);
 
         foreach (var btn in btns) {
             btn.Draw(_spriteBatch, font);

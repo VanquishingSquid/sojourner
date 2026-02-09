@@ -5,13 +5,13 @@ using MonoGame.Extended;
 
 namespace sojourner;
 
-public class IntroHandler {
+public class MCIntroHandler {
     Texture2D texture;
     Texture2D earthTexture;
     int x,y,width,height;
     float earthFrame = 0;
 
-    public IntroHandler(ContentManager Content, int x, int y, int width, int height) {
+    public MCIntroHandler(ContentManager Content, int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;

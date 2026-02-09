@@ -43,12 +43,12 @@ public class GameRover : Game {
     List<BoolBox> codeInputObjects = [];
     SolidRect codeMovingBlock;
     int codeBlockTimer = 0;
-    SolidPlatform powerMovingPlatform = new SolidPlatform(1033,570,150);
+    SolidPlatform powerMovingPlatform;
     PowerSystem powerSystem;
     ExitDoor exitDoor;
-    bool isIntro = true;
     WordContainer wordContainer;
-    Texture2D unstablePlatformSign, noEnergyLiftSign;
+    Texture2D unstablePlatformSign;
+    RoverIntroHandler introHandler;
 
     GumService GumUI => GumService.Default;
 
@@ -65,7 +65,7 @@ public class GameRover : Game {
     }
 
     private void HandleMissionControlMessage(NetPacketReader dataReader) {
-        string text = dataReader.GetString(300);
+        string text = dataReader.GetString(600);
         switch (text.Split(' ')[0]) {
             case "message": 
                 recvdFeedbackMsgTime = maxFeedbackMsgTime;
@@ -89,7 +89,10 @@ public class GameRover : Game {
             new SolidRect(883,670,300,100),  // block after code entry below
             new SolidRect(883,0,150,570),    // block after code entry above
             codeMovingBlock,
+            new SolidRect(1033,0,150,470), // block above moving platform
             new SolidRect(1183,570,700,200), // block after moving platform
+            new SolidRect(-3250,0,300,screenHeight), // block preventing falling off the left
+            new SolidRect(1883,0,400,screenHeight), // block preventing falling off the right
         };
 
         triangles = new() {
@@ -161,7 +164,7 @@ public class GameRover : Game {
         }
     }
 
-    protected void LoadUnstablePlatforms() {
+    private void LoadUnstablePlatforms() {
         int initx = PlatformData.initx, inity = PlatformData.inity, unitSize = PlatformData.unitSize;
 
         platforms.AddRange(PlatformData.xsysplatforms.Select(coords => {
@@ -234,12 +237,13 @@ public class GameRover : Game {
 
         // text
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        font = Content.Load<SpriteFont>("Cantarell");
+        font = Content.Load<SpriteFont>("Corptic DEMO");
 
-        noEnergyLiftSign = Content.Load<Texture2D>("images/broken-lift-sign");
         unstablePlatformSign = Content.Load<Texture2D>("images/unstable-platforms-sign");
+        introHandler = new RoverIntroHandler(Content);
         InitGumUI();
 
+        powerMovingPlatform = new SolidPlatform(1033,570,150,false,Content.Load<Texture2D>("images/moving-platform"),new Vector2(0,-30));
         powerSystem = new PowerSystem(powerMovingPlatform, Content);
         exitDoor    = new ExitDoor(Content,1350,570);
         wordContainer = new WordContainer((int)(screenWidth*gameProportion+10), 280, (int)(screenWidth*(1-gameProportion)-20),screenHeight-280-10,font);
@@ -276,20 +280,21 @@ public class GameRover : Game {
             Exit();
         }
 
+        if (!introHandler.isActive) {
+            xoffset = (int)(rover.Update(!tbToMc.IsFocused)-screenWidth*gameProportion/2);
+            codeInputObjects.ForEach(e => e.Update(rover));
+            Send($"position {rover.x} {rover.y+rover.height}");
+            CheckCode();
+            powerSystem.Update(rover);
+            exitDoor.Update(rover);
 
-        xoffset = (int)(rover.Update(!tbToMc.IsFocused)-screenWidth*gameProportion/2);
-        codeInputObjects.ForEach(e => e.Update(rover));
-        Send($"position {rover.x} {rover.y+rover.height}");
-        CheckCode();
-        powerSystem.Update(rover);
-        exitDoor.Update(rover);
+            GumUI.Update(gameTime);
+        }
 
-        GumUI.Update(gameTime);
         base.Update(gameTime);
     }
 
     private void DrawRandomSigns() {
-        _spriteBatch.Draw(noEnergyLiftSign, new Vector2(1033-xoffset,370), Color.White);
         _spriteBatch.Draw(unstablePlatformSign, new Vector2(-90-xoffset,770-118), Color.White);
     }
 
@@ -302,16 +307,16 @@ public class GameRover : Game {
         }
         
         DrawRandomSigns();
+        powerSystem.Draw(_spriteBatch,xoffset);
+        
         foreach (SolidPlatform s in platforms) {
             s.Draw(_spriteBatch, xoffset);
         }
-
 
         // code display
         codeInputObjects.ForEach(e=>e.Draw(_spriteBatch, xoffset));
         _spriteBatch.Draw(correspondingCodeTexture, new Vector2(510-xoffset,578), Color.White);
 
-        powerSystem.Draw(_spriteBatch,xoffset);
         exitDoor.Draw(_spriteBatch, xoffset);
 
         rover.Draw(_spriteBatch, (int)(screenWidth*gameProportion));
@@ -366,13 +371,19 @@ public class GameRover : Game {
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
-        
-        DrawGameScreen();
-        DrawCommMenu();
-        
+
+        if (introHandler.isActive) {
+            introHandler.Draw(_spriteBatch);
+        } else {
+            DrawGameScreen();
+            DrawCommMenu();
+        }
+
         _spriteBatch.End();
 
-        GumUI.Draw();
+        if (!introHandler.isActive) {
+            GumUI.Draw();
+        }
 
         base.Draw(gameTime);
     }

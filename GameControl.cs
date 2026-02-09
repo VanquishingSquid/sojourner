@@ -14,6 +14,8 @@ using MonoGameGum;
 using MonoGame.Extended;
 using System.Collections.Generic;
 using System.Linq;
+using Gum.Forms.DefaultVisuals;
+using MonoGameGum.GueDeriving;
 
 namespace sojourner;
 
@@ -29,19 +31,21 @@ public class GameControl : Game {
     SpriteFont font;
     int screenWidth, screenHeight;
     const float gameProportion = 0.75f;
-    List<MCButton> ws = [];
-    ButtonContainer toSendWs;
+    SendButtonContainer toSendWs;
     int wordButtonStartX;
     const int topWordButtonStartY=35;
-    const int botWordButtonStartY=350;
+    const int botWordButtonStartY=380;
     const int yWordSep=25;
     const int xWordSep=5;
     Texture2D codeManualTexture;
     Screen displayScreen = Screen.PlatformMap;
     List<MCButton> headerButtons;
     PulseHandler pulseHandler;
-    IntroHandler introHandler;
+    MCIntroHandler introHandler;
     UpdatingMap updatingMap;
+    RecvButtonContainer receivedWs;
+    const int maxFeedbackMsgTime = 300;
+    int feedbackMsgTime = 0;
     
     GumService GumUI => GumService.Default;
 
@@ -57,49 +61,27 @@ public class GameControl : Game {
         wordButtonStartX = (int)(screenWidth*gameProportion)+10;
     }
 
-    private void HandleRoverMsg(string s) {
-        List<string> newws = s.Split(' ').ToList();
-        List<MCButton> newbtns = [];
-        
-        int wx = wordButtonStartX;
-        int wy = topWordButtonStartY;
-
-        for (int i=0;i<newws.Count;i++) {
-            string w = newws[i];
-            MCButton btn = new(wx,wy,w,()=>{toSendWs.AddButton(w);}, font,1f);
-
-            if (wx+btn.width>screenWidth-10) {
-                wx=wordButtonStartX;
-                wy+=yWordSep;
-                btn.x=wx;
-                btn.y=wy;
-            } else {
-                wx+=btn.width+xWordSep;
-            }
-            
-            newbtns.Add(btn);
-        }
-        
-        ws = newbtns;
-    }
-
     protected override void Initialize() {
         base.Initialize();
     }
 
     private void LoadHeaderButtons() {
         headerButtons = [
-            new MCButton(0,0,"intro screen",()=>{displayScreen=Screen.Intro;}, font),
-            new MCButton(0,0,"code manual",()=>{displayScreen=Screen.CodeManual;}, font),
-            new MCButton(0,0,"pulse diagram", ()=>{displayScreen=Screen.PulseDiagram;}, font),
-            new MCButton(0,0,"platform map", ()=>{displayScreen=Screen.PlatformMap;}, font),
+            new MCButton(0,0,"intro screen",()=>{displayScreen=Screen.Intro;}, font, 2f),
+            new MCButton(0,0,"code manual",()=>{displayScreen=Screen.CodeManual;}, font, 2f),
+            new MCButton(0,0,"pulse diagram", ()=>{displayScreen=Screen.PulseDiagram;}, font, 2f),
+            new MCButton(0,0,"platform map", ()=>{displayScreen=Screen.PlatformMap;}, font, 2f),
         ];
 
-        int pos = 20;
-        foreach (var item in headerButtons) {
-            item.UpdateX(pos);
-            item.UpdateY(20);
-            pos += item.width + 20;
+        int padding = 10;
+        int width = (int)(screenWidth*gameProportion/4f);
+        for (int i = 0; i < headerButtons.Count; i++) {
+            var item = headerButtons[i];
+            item.UpdateX(padding/2+i*width);
+            item.UpdateY(padding/2);
+            item.width = width-padding;
+            item.height = 80-padding;
+            item.CenterText();
         }
     }
 
@@ -114,7 +96,7 @@ public class GameControl : Game {
             string text = dataReader.GetString(500);
             switch (text.Split(' ')[0]) {
                 case "message":
-                    HandleRoverMsg(text[8..]);
+                    receivedWs.HandleRoverMsg(text[8..]);
                     break;
                 case "position":
                     string[] split = text.Split(' ');
@@ -127,14 +109,15 @@ public class GameControl : Game {
 
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        font = Content.Load<SpriteFont>("Cantarell");
-        toSendWs = new ButtonContainer(wordButtonStartX, botWordButtonStartY, screenWidth-10-wordButtonStartX, 360, font, yWordSep, xWordSep);
+        font = Content.Load<SpriteFont>("Corptic DEMO");
+        toSendWs = new SendButtonContainer(wordButtonStartX, botWordButtonStartY, screenWidth-10-wordButtonStartX, 315, font, yWordSep, xWordSep);
+        receivedWs = new RecvButtonContainer(wordButtonStartX, 40, screenWidth-10-wordButtonStartX, botWordButtonStartY-80, font, yWordSep, xWordSep, toSendWs);
         InitGumUI();
         codeManualTexture = Content.Load<Texture2D>("images/code-manual");
 
         LoadHeaderButtons();
         
-        introHandler = new IntroHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
+        introHandler = new MCIntroHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
         pulseHandler = new PulseHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
         int padding=20;
         updatingMap  = new UpdatingMap(padding,screenHeight-720-padding,(int)(screenWidth*gameProportion)-2*padding,720-2*padding,Content,GraphicsDevice);
@@ -156,14 +139,8 @@ public class GameControl : Game {
             Exit();
         }
 
-        // if (Kb.IsTapped(Ks.Left)) {
-        //     HandleRoverMsg("banana pirate skibidi orange xkcd");
-        // }
-
-        foreach (var w in ws) {
-            w.Update();
-        }
         toSendWs.Update();
+        receivedWs.Update();
 
         foreach (var btn in headerButtons) {
             btn.Update();
@@ -205,20 +182,35 @@ public class GameControl : Game {
     private void InitGumUI() {
         GumUI.Initialize(this, DefaultVisualsVersion.V3);
 
-        Button button = new Button();
+        ButtonVisual button = new ButtonVisual();
         button.AddToRoot();
         button.X = (int)(screenWidth*gameProportion+10);
-        button.Y = screenHeight - 80;
+        button.Y = screenHeight - 95;
         button.Width = (int)(screenWidth*(1-gameProportion)-20);
         button.Height = 20;
-        button.Text = "Send data";
         button.Click += (_,_) => {
             SendToRover();
         };
+        TextRuntime text = button.TextInstance;
+        text.Text = "Send data";
+        // text.Font = 
+        // button.Text = "Send data";
+
+        // Button button = new Button();
+        // button.AddToRoot();
+        // button.X = (int)(screenWidth*gameProportion+10);
+        // button.Y = screenHeight - 95;
+        // button.Width = (int)(screenWidth*(1-gameProportion)-20);
+        // button.Height = 20;
+        // button.Text = "Send data";
+        // button.Click += (_,_) => {
+        //     SendToRover();
+        // };
     }
 
     private void SendToRover() {
         Send(toSendWs.CreateMessage());
+        feedbackMsgTime = maxFeedbackMsgTime;
     }
 
     private void DrawWord(string w, int x, int y) {
@@ -232,13 +224,14 @@ public class GameControl : Game {
         // white bg
         _spriteBatch.FillRectangle(new Rectangle(initx, 0, width, screenHeight), Color.White);
 
-        // incoming messages
         _spriteBatch.DrawString(font, "Incoming words:", new Vector2(initx+10, 10), Color.Black);
-        foreach (var w in ws) {
-            w.Draw(_spriteBatch, font);
+        _spriteBatch.DrawString(font, "Select above words to send back:", new Vector2(initx+10,botWordButtonStartY-25), Color.Black);
+
+        if (feedbackMsgTime-->0) {
+            _spriteBatch.DrawString(font, "Message sent!", new Vector2(initx+10,screenHeight-35), Color.Green*(feedbackMsgTime/(float)maxFeedbackMsgTime));
         }
 
-        // outgoing
+        receivedWs.Draw(_spriteBatch);
         toSendWs.Draw(_spriteBatch);
     }
 

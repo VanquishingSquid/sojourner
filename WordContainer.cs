@@ -41,6 +41,8 @@ public class WordContainer {
 
     public void NewMessage(List<string> ws) {
         words = [];
+        yw = y;
+        xw = x;
         foreach (var item in ws) {
             Word w = new Word(xw,yw,font,item);
 
