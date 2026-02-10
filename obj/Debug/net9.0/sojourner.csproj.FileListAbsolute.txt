@@ -84,3 +84,6 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/symbols/trident.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/lekky.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/dust.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/code-button-green.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/code-button-red.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/moving-block.xnb

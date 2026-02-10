@@ -37,7 +37,6 @@ public class GameControl : Game {
     const int botWordButtonStartY=380;
     const int yWordSep=25;
     const int xWordSep=5;
-    Texture2D codeManualTexture;
     Screen displayScreen = Screen.Intro;
     List<MCButton> headerButtons;
     PulseHandler pulseHandler;
@@ -46,6 +45,7 @@ public class GameControl : Game {
     RecvButtonContainer receivedWs;
     const int maxFeedbackMsgTime = 300;
     int feedbackMsgTime = 0;
+    CodeHandler codeHandler;
     
     GumService GumUI => GumService.Default;
 
@@ -115,10 +115,10 @@ public class GameControl : Game {
         toSendWs = new SendButtonContainer(wordButtonStartX, botWordButtonStartY+20, screenWidth-10-wordButtonStartX, 295, font, yWordSep, xWordSep);
         receivedWs = new RecvButtonContainer(wordButtonStartX, 40, screenWidth-10-wordButtonStartX, botWordButtonStartY-80, font, yWordSep, xWordSep, toSendWs);
         InitGumUI();
-        codeManualTexture = Content.Load<Texture2D>("images/code-manual");
 
         LoadHeaderButtons();
         
+        codeHandler = new CodeHandler(Content);
         introHandler = new MCIntroHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
         pulseHandler = new PulseHandler(Content, 0, screenHeight-720, (int)(screenWidth*gameProportion), 720);
         int padding=20;
@@ -165,7 +165,7 @@ public class GameControl : Game {
         // draw content
         switch (displayScreen) {
             case Screen.CodeManual:
-                _spriteBatch.Draw(codeManualTexture, new Vector2(0,80), Color.White);
+                codeHandler.Draw(_spriteBatch);
                 break;
 
             case Screen.PlatformMap:

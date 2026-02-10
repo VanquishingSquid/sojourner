@@ -26,25 +26,6 @@ public class DecorHandler {
         sb.Draw(bg, new Vector2(x,0), Color.White);
         sb.Draw(bg, new Vector2(x-bg.Width,0), Color.White);
         sb.Draw(bg, new Vector2(x+bg.Width,0), Color.White);
-
-        // // move and display dust
-        // List<(int,int)> tmp = [];
-        // foreach (var item in backDusts) {
-        //     int x1 = item.Item1;
-        //     int y1 = item.Item2;
-        //     sb.Draw(dust, new Vector2(x1,y1), Color.White);
-        //     if (x1<screenWidth && y1<screenWidth) {
-        //         tmp.Add((x1+xSpeed, y1+ySpeed));
-        //     }
-        // }
-        // backDusts = tmp;
-
-        // // generate new dust
-        // if (r.NextDouble()>0.5) {
-        //     backDusts.Add(((int)(r.NextDouble()*screenWidth),-dust.Height));
-        // } else {
-        //     backDusts.Add((-dust.Width,(int)(r.NextDouble()*screenHeight)));
-        // }
     }
 
     public void DrawFg(SpriteBatch sb, int xoffset) {

@@ -15,9 +15,7 @@ public class SolidGround : SolidRect {
 
     public new void Draw(SpriteBatch sb, int xoffset) {
         int xi = x-xoffset;
-        // Console.WriteLine($"\n{x}, xoffset: {xoffset}, y: {y}, x-xoffset: {x-xoffset}, width: {width}, twidth: {texture.Width}");
         while (xi<x-xoffset+width) {
-            // Console.WriteLine($"{xi}");
             sb.Draw(texture, new Vector2(xi,y-2), Color.White);
             xi += texture.Width;
         }

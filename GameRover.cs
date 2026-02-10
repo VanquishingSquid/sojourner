@@ -41,7 +41,7 @@ public class GameRover : Game {
     List<bool> randomCode;
     Texture2D correspondingCodeTexture;
     List<BoolBox> codeInputObjects = [];
-    SolidRect codeMovingBlock;
+    MovingBlock codeMovingBlock;
     int codeBlockTimer = 0;
     SolidPlatform powerMovingPlatform;
     PowerSystem powerSystem;
@@ -83,7 +83,7 @@ public class GameRover : Game {
     }
 
     private void MakeMap() {
-        codeMovingBlock = new SolidRect(883,570,150,100);
+        codeMovingBlock = new MovingBlock(Content, correspondingCodeTexture, 883,570,150,100);
 
         solids = new() {
             new SolidRect(883,670,300,100),  // block after code entry below
@@ -168,7 +168,7 @@ public class GameRover : Game {
         int padding = 10;
         int inity = 628;
         for (int i=0; i<11; i++) {
-            codeInputObjects.Add(new BoolBox(initx+(btnWidth+padding)*i,inity, btnWidth, btnWidth));
+            codeInputObjects.Add(new BoolBox(Content, initx+(btnWidth+padding)*i,inity, btnWidth, btnWidth));
         }
     }
 
@@ -313,6 +313,8 @@ public class GameRover : Game {
         foreach (SolidRect s in solids) {
             if (s is SolidGround sg) {
                 sg.Draw(_spriteBatch, xoffset);
+            } else if (s is MovingBlock mb) {
+                mb.Draw(_spriteBatch, xoffset);
             } else {
                 s.Draw(_spriteBatch, xoffset);
             }
@@ -332,7 +334,7 @@ public class GameRover : Game {
 
         // code display
         codeInputObjects.ForEach(e=>e.Draw(_spriteBatch, xoffset));
-        _spriteBatch.Draw(correspondingCodeTexture, new Vector2(510-xoffset,578), Color.White);
+        // _spriteBatch.Draw(correspondingCodeTexture, new Vector2(510-xoffset,578), Color.White);
 
         exitDoor.Draw(_spriteBatch, xoffset);
 
