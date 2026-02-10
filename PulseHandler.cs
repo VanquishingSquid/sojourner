@@ -56,6 +56,7 @@ public class PulseHandler {
     }
 
     public void Draw(SpriteBatch spriteBatch) {
+
         spriteBatch.Draw(texture, new Vector2(x,y), Color.White);
         spriteBatch.FillRectangle(new(barx,bary,barwidth,barheight), Color.Red);
 

@@ -9,7 +9,7 @@ namespace sojourner;
 public class SolidGround : SolidRect {
     Texture2D texture;
 
-    public SolidGround(int x, int y, int width, int height, ContentManager Content) : base(x,y,width,height) {
+    public SolidGround(int x, int y, int width, int height, ContentManager Content) : base(Content, x,y,width,height) {
         texture = Content.Load<Texture2D>("images/ground");
     }
 

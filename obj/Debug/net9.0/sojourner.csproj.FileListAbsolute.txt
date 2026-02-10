@@ -87,3 +87,5 @@
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/code-button-green.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/code-button-red.xnb
 /home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/moving-block.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/house.xnb
+/home/filk/programming/sojourner/bin/Debug/net9.0/Content/images/solid.xnb

@@ -7,7 +7,7 @@ namespace sojourner;
 
 public class MovingBlock : SolidRect {
     Texture2D symbol, block;
-    public MovingBlock(ContentManager Content, Texture2D symbol, int x, int y, int width, int height) : base(x, y, width, height) {
+    public MovingBlock(ContentManager Content, Texture2D symbol, int x, int y, int width, int height) : base(Content, x, y, width, height) {
         this.symbol = symbol;
         this.block = Content.Load<Texture2D>("images/moving-block");
     }

@@ -50,6 +50,7 @@ public class GameRover : Game {
     Texture2D unstablePlatformSign;
     RoverIntroHandler introHandler;
     DecorHandler decorHandler;
+    bool done;
 
     GumService GumUI => GumService.Default;
 
@@ -86,13 +87,13 @@ public class GameRover : Game {
         codeMovingBlock = new MovingBlock(Content, correspondingCodeTexture, 883,570,150,100);
 
         solids = new() {
-            new SolidRect(883,670,300,100),  // block after code entry below
-            new SolidRect(883,0,150,570),    // block after code entry above
             codeMovingBlock,
-            new SolidRect(1033,0,150,470), // block above moving platform
-            new SolidRect(1183,570,700,200), // block after moving platform
-            new SolidRect(-3250,0,300,screenHeight), // block preventing falling off the left
-            new SolidRect(1883,0,400,screenHeight), // block preventing falling off the right
+            new SolidRect(Content, 883,670,300,100),  // block after code entry below
+            new SolidRect(Content, 883,0,150,570),    // block after code entry above
+            new SolidRect(Content, 1033,0,150,470), // block above moving platform
+            new SolidRect(Content, 1183,570,700,200), // block after moving platform
+            new SolidRect(Content, -3250,0,300,screenHeight), // block preventing falling off the left
+            new SolidRect(Content, 1883,0,400,screenHeight), // block preventing falling off the right
             
             new SolidGround(-3000,770,6000,30,Content), // ground
         };
@@ -295,7 +296,10 @@ public class GameRover : Game {
             Send($"position {rover.x} {rover.y+rover.height}");
             CheckCode();
             powerSystem.Update(rover);
-            exitDoor.Update(rover);
+            
+            if (exitDoor.Update(rover)) {
+                done = true;
+            }
 
             GumUI.Update(gameTime);
         }
@@ -304,7 +308,7 @@ public class GameRover : Game {
     }
 
     private void DrawRandomSigns() {
-        _spriteBatch.Draw(unstablePlatformSign, new Vector2(-90-xoffset,770-118), Color.White);
+        _spriteBatch.Draw(unstablePlatformSign, new Vector2(-170-xoffset,770-118), Color.White);
     }
 
     private void DrawGameScreen() {
@@ -394,6 +398,9 @@ public class GameRover : Game {
 
         if (introHandler.isActive) {
             introHandler.Draw(_spriteBatch);
+        } else if (done) {
+            GraphicsDevice.Clear(Color.Black);
+            _spriteBatch.DrawString(font, "You got to safety!", new Vector2(10,10), Color.White);
         } else {
             DrawGameScreen();
             DrawCommMenu();
@@ -401,7 +408,7 @@ public class GameRover : Game {
 
         _spriteBatch.End();
 
-        if (!introHandler.isActive) {
+        if (!introHandler.isActive && !done) {
             GumUI.Draw();
         }
 

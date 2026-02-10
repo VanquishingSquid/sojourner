@@ -3,7 +3,7 @@ Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Siz
 "/home/filk/programming/sojourner/Content/Corptic DEMO.spritefont","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/Corptic DEMO.xnb","FontDescriptionProcessor","SpriteFontContent",2015,13337,0.4716327
 "/home/filk/programming/sojourner/Content/images/bg.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/bg.xnb","TextureProcessor","Texture2DContent",349654,2880085,0.5866735
 "/home/filk/programming/sojourner/Content/images/broken-lift-sign.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/broken-lift-sign.xnb","TextureProcessor","Texture2DContent",2303,180085,0.3107673
-"/home/filk/programming/sojourner/Content/images/charger.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/charger.xnb","TextureProcessor","Texture2DContent",195,9133,0.2348993
+"/home/filk/programming/sojourner/Content/images/charger.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/charger.xnb","TextureProcessor","Texture2DContent",340,9133,0.2979117
 "/home/filk/programming/sojourner/Content/images/circle.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/circle.xnb","TextureProcessor","Texture2DContent",298,6485,0.4265999
 "/home/filk/programming/sojourner/Content/images/code-button-green.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/code-button-green.xnb","TextureProcessor","Texture2DContent",212,4181,0.29301
 "/home/filk/programming/sojourner/Content/images/code-button-red.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/code-button-red.xnb","TextureProcessor","Texture2DContent",212,4181,0.0065669
@@ -13,6 +13,7 @@ Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Siz
 "/home/filk/programming/sojourner/Content/images/exit.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/exit.xnb","TextureProcessor","Texture2DContent",190,10669,0.0108441
 "/home/filk/programming/sojourner/Content/images/ground.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/ground.xnb","TextureProcessor","Texture2DContent",4879,16469,0.0063593
 "/home/filk/programming/sojourner/Content/images/header-button.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/header-button.xnb","TextureProcessor","Texture2DContent",549,64909,0.363035
+"/home/filk/programming/sojourner/Content/images/house.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/house.xnb","TextureProcessor","Texture2DContent",667,84565,0.3347726
 "/home/filk/programming/sojourner/Content/images/intro-manual.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/intro-manual.xnb","TextureProcessor","Texture2DContent",416040,2592085,0.3655701
 "/home/filk/programming/sojourner/Content/images/intro-screen.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/intro-screen.xnb","TextureProcessor","Texture2DContent",1186922,3840085,0.6642359
 "/home/filk/programming/sojourner/Content/images/lekky.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/lekky.xnb","TextureProcessor","Texture2DContent",327,7253,0.1754596
@@ -27,6 +28,7 @@ Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Siz
 "/home/filk/programming/sojourner/Content/images/rover.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/rover.xnb","TextureProcessor","Texture2DContent",808,5461,0.0059292
 "/home/filk/programming/sojourner/Content/images/sloped-platform-left.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/sloped-platform-left.xnb","TextureProcessor","Texture2DContent",1300,6485,0.2713292
 "/home/filk/programming/sojourner/Content/images/sloped-platform-right.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/sloped-platform-right.xnb","TextureProcessor","Texture2DContent",1290,6485,0.0062717
+"/home/filk/programming/sojourner/Content/images/solid.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/solid.xnb","TextureProcessor","Texture2DContent",1774511,4000085,0.5379521
 "/home/filk/programming/sojourner/Content/images/spinning-earth.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/spinning-earth.xnb","TextureProcessor","Texture2DContent",60946,866389,0.4759428
 "/home/filk/programming/sojourner/Content/images/square.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/square.xnb","TextureProcessor","Texture2DContent",156,6485,0.0058344
 "/home/filk/programming/sojourner/Content/images/star.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/star.xnb","TextureProcessor","Texture2DContent",358,6485,0.0181742
@@ -43,5 +45,5 @@ Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Siz
 "/home/filk/programming/sojourner/Content/images/symbols/star.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/symbols/star.xnb","TextureProcessor","Texture2DContent",426,4181,0.0031271
 "/home/filk/programming/sojourner/Content/images/symbols/trident.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/symbols/trident.xnb","TextureProcessor","Texture2DContent",339,4181,0.0096282
 "/home/filk/programming/sojourner/Content/images/triangle.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/triangle.xnb","TextureProcessor","Texture2DContent",305,6485,0.0135316
-"/home/filk/programming/sojourner/Content/images/unstable-platforms-sign.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/unstable-platforms-sign.xnb","TextureProcessor","Texture2DContent",3790,58141,0.0154182
+"/home/filk/programming/sojourner/Content/images/unstable-platforms-sign.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/unstable-platforms-sign.xnb","TextureProcessor","Texture2DContent",3783,58141,0.3152989
 "/home/filk/programming/sojourner/Content/images/warning.png","/home/filk/programming/sojourner/Content/bin/DesktopGL/Content/images/warning.xnb","TextureProcessor","Texture2DContent",309,1109,0.0071034

@@ -24,7 +24,7 @@ public class ExitDoor {
     Rectangle doorRect;
     Rectangle lekkyRect;
 
-    Texture2D chargerTexture, doorTexture, doorOpenTexture, lekkyTexture;
+    Texture2D chargerTexture, doorTexture, doorOpenTexture, lekkyTexture, houseTexture;
     const int lekkywidth = 32, lekkyheight = 14;
 
     public ExitDoor(ContentManager Content, int x, int y) {
@@ -34,6 +34,8 @@ public class ExitDoor {
         // charger
         this.chargerTexture = Content.Load<Texture2D>("images/charger");
         this.chargerRect    = new Rectangle(x, y-this.chargerTexture.Height, this.chargerTexture.Width, this.chargerTexture.Height);
+
+        this.houseTexture = Content.Load<Texture2D>("images/house");
 
         // door
         this.doorTexture = Content.Load<Texture2D>("images/exit");
@@ -59,7 +61,7 @@ public class ExitDoor {
         this.canPulse = canPulse;
     }
 
-    public void Update(Rover r) {
+    public bool Update(Rover r) {
         // sending pulses to charger
         if (level<pulsesNeeded && Kb.IsTapped(Ks.Interact) && new Rectangle(r.x,r.y,r.width,r.height).Intersects(chargerRect)) {
             if (canPulse) {
@@ -73,7 +75,7 @@ public class ExitDoor {
 
         // exiting game
         if (level==pulsesNeeded && Kb.IsTapped(Ks.Interact) && new Rectangle(r.x,r.y,r.width,r.height).Intersects(doorRect)) {
-            Environment.Exit(0);
+            return true;
         }
 
         // visually updating charger
@@ -91,9 +93,13 @@ public class ExitDoor {
         // lekky opacity timer n animation frame
         animframe = (animframe + 0.25f) % 4;
         timer = Math.Max(timer-1,0);
+
+        return false;
     }
 
     public void Draw(SpriteBatch spriteBatch, int xoffset) {
+        spriteBatch.Draw(houseTexture, new Vector2(doorRect.X-5-xoffset,doorRect.Y+doorRect.Height-houseTexture.Height), Color.White);
+
         // charger
         spriteBatch.Draw(chargerTexture, new Vector2(chargerRect.X-xoffset, chargerRect.Y), Color.White);
 
