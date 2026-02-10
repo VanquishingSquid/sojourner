@@ -40,8 +40,11 @@ public class PowerSystem {
         movingPlatform.y = (int)(50*Math.Cos(timer/100f)+620);
     }
 
-    public void Draw(SpriteBatch _spriteBatch, int xoffset) {
-        _spriteBatch.Draw(power ? switchTextureOn : switchTextureOff, new Vector2(switchX-xoffset, switchY-switchHeight), Color.White);
+    public void DrawSwitch(SpriteBatch _spriteBatch, int xoffset) {
+        _spriteBatch.Draw(power ? switchTextureOn : switchTextureOff, new Vector2(switchX-xoffset, switchY-switchHeight-11), Color.White);
+    }
+
+    public void DrawLift(SpriteBatch _spriteBatch, int xoffset) {
         _spriteBatch.Draw(power ? liftTextureOn : liftTextureOff, new Vector2(1033-xoffset,470), Color.White);
     }
 }

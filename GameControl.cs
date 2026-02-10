@@ -38,7 +38,7 @@ public class GameControl : Game {
     const int yWordSep=25;
     const int xWordSep=5;
     Texture2D codeManualTexture;
-    Screen displayScreen = Screen.PlatformMap;
+    Screen displayScreen = Screen.Intro;
     List<MCButton> headerButtons;
     PulseHandler pulseHandler;
     MCIntroHandler introHandler;
@@ -165,7 +165,7 @@ public class GameControl : Game {
         // draw content
         switch (displayScreen) {
             case Screen.CodeManual:
-                _spriteBatch.Draw(codeManualTexture, new Vector2(0,screenHeight-400), Color.White);
+                _spriteBatch.Draw(codeManualTexture, new Vector2(0,80), Color.White);
                 break;
 
             case Screen.PlatformMap:

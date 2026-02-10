@@ -49,6 +49,7 @@ public class GameRover : Game {
     WordContainer wordContainer;
     Texture2D unstablePlatformSign;
     RoverIntroHandler introHandler;
+    DecorHandler decorHandler;
 
     GumService GumUI => GumService.Default;
 
@@ -85,7 +86,6 @@ public class GameRover : Game {
         codeMovingBlock = new SolidRect(883,570,150,100);
 
         solids = new() {
-            new SolidRect(-3000,770,6000,30), // ground
             new SolidRect(883,670,300,100),  // block after code entry below
             new SolidRect(883,0,150,570),    // block after code entry above
             codeMovingBlock,
@@ -93,14 +93,16 @@ public class GameRover : Game {
             new SolidRect(1183,570,700,200), // block after moving platform
             new SolidRect(-3250,0,300,screenHeight), // block preventing falling off the left
             new SolidRect(1883,0,400,screenHeight), // block preventing falling off the right
+            
+            new SolidGround(-3000,770,6000,30,Content), // ground
         };
 
         triangles = new() {
-            new SolidTriangle(300,670,200,100,false), // slope up to code
+            new SolidTriangle(Content,300,670,100,100,false), // slope up to code
         };
 
         platforms = new() {
-            new SolidPlatform(500,670,383), // code platform
+            new SolidPlatform(Content,400,670,483), // code platform
             powerMovingPlatform,
         };
     }
@@ -137,29 +139,35 @@ public class GameRover : Game {
         base.Initialize();
     }
 
-    protected void Send(string s) {
+    private void Send(string s) {
         var writer = new NetDataWriter();
         writer.Put(s);
         client.SendToAll(writer, DeliveryMethod.ReliableOrdered);
     }
 
-    protected void LoadCode() {
+    private void LoadCode() {
         // randomly generated code
         codeObjects = [
-            new([true,  false, false, true,  true,  false, true,  false, false], Content.Load<Texture2D>("images/star")),
-            new([true,  false, false, true,  true,  true,  true,  false, false], Content.Load<Texture2D>("images/circle")),
-            new([false, true,  true,  false, false, false, true,  false, true ], Content.Load<Texture2D>("images/square")),
-            new([true,  false, false, false, true,  false, false, true,  true ], Content.Load<Texture2D>("images/triangle"))
+            new([false,true ,false,false,false,true ,false,false,true ,false,false], Content.Load<Texture2D>("images/symbols/blob")),
+            new([true ,false,true ,false,true ,true ,false,true ,false,true ,true ], Content.Load<Texture2D>("images/symbols/bridge")),
+            new([false,false,false,false,false,true ,true ,false,true ,false,false], Content.Load<Texture2D>("images/symbols/circle")),
+            new([false,false,true ,false,false,true ,true ,false,true ,false,false], Content.Load<Texture2D>("images/symbols/cylinder")),
+            new([false,false,true ,true ,false,true ,true ,false,true ,true ,false], Content.Load<Texture2D>("images/symbols/hexagon")),
+            new([true ,false,true ,true ,true ,true ,false,false,false,true ,true ], Content.Load<Texture2D>("images/symbols/parallelogram")),
+            new([true ,false,false,true ,true ,false,false,false,true ,true ,true ], Content.Load<Texture2D>("images/symbols/plus")),
+            new([true ,false,true ,false,true ,false,false,true ,true ,false,true ], Content.Load<Texture2D>("images/symbols/spiral")),
+            new([true ,false,true ,false,false,false,false,true ,true ,false,false], Content.Load<Texture2D>("images/symbols/star")),
+            new([true ,false,true ,false,false,false,false,true ,false,false,false], Content.Load<Texture2D>("images/symbols/trident")),
         ];
         CodeObject chosen = codeObjects[Random.Shared.Next(codeObjects.Count)];
         randomCode = chosen.Key;
         correspondingCodeTexture = chosen.Value;
 
-        int initx = 510;
+        int initx = 410;
         int btnWidth = 32;
         int padding = 10;
         int inity = 628;
-        for (int i=0; i<9; i++) {
+        for (int i=0; i<11; i++) {
             codeInputObjects.Add(new BoolBox(initx+(btnWidth+padding)*i,inity, btnWidth, btnWidth));
         }
     }
@@ -172,7 +180,7 @@ public class GameRover : Game {
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
             int y2 = inity - unitSize*coords.Item2.Item2;
-            return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2));
+            return new SolidPlatform(Content, Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2));
         }));
 
         platforms.AddRange(PlatformData.xsysplatformsfake.Select(coords => {
@@ -180,7 +188,7 @@ public class GameRover : Game {
             int y1 = inity - unitSize*coords.Item1.Item2;
             int x2 = initx - unitSize*coords.Item2.Item1;
             int y2 = inity - unitSize*coords.Item2.Item2;
-            return new SolidPlatform(Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2), true);
+            return new SolidPlatform(Content, Math.Min(x1,x2), Math.Min(y1,y2), Math.Abs(x1-x2), true);
         }));
 
         triangles.AddRange(PlatformData.xsystriangles.Select(coords => {
@@ -199,7 +207,7 @@ public class GameRover : Game {
             }
 
             // we know that x1 has to be less than x2
-            return new SolidTriangle(x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2);
+            return new SolidTriangle(Content, x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2);
         }));
 
         triangles.AddRange(PlatformData.xsystrianglesfake.Select(coords => {
@@ -218,7 +226,7 @@ public class GameRover : Game {
             }
 
             // we know that x1 has to be less than x2
-            return new SolidTriangle(x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2, true);
+            return new SolidTriangle(Content,x1,Math.Min(y1,y2),x2-x1,Math.Abs(y2-y1),y1<y2, true);
         }));
     }
 
@@ -243,10 +251,11 @@ public class GameRover : Game {
         introHandler = new RoverIntroHandler(Content);
         InitGumUI();
 
-        powerMovingPlatform = new SolidPlatform(1033,570,150,false,Content.Load<Texture2D>("images/moving-platform"),new Vector2(0,-30));
+        powerMovingPlatform = new SolidPlatform(Content,1033,570,150,false,Content.Load<Texture2D>("images/moving-platform"),new Vector2(0,-30));
         powerSystem = new PowerSystem(powerMovingPlatform, Content);
         exitDoor    = new ExitDoor(Content,1350,570);
         wordContainer = new WordContainer((int)(screenWidth*gameProportion+10), 280, (int)(screenWidth*(1-gameProportion)-20),screenHeight-280-10,font);
+        decorHandler = new DecorHandler(Content, (int)(screenWidth*gameProportion), screenHeight);
         LoadCode();
         MakeMap();
         LoadUnstablePlatforms();
@@ -299,19 +308,27 @@ public class GameRover : Game {
     }
 
     private void DrawGameScreen() {
+        decorHandler.DrawBg(_spriteBatch, xoffset);
+
         foreach (SolidRect s in solids) {
-            s.Draw(_spriteBatch, xoffset);
+            if (s is SolidGround sg) {
+                sg.Draw(_spriteBatch, xoffset);
+            } else {
+                s.Draw(_spriteBatch, xoffset);
+            }
         }
         foreach (SolidTriangle s in triangles) {
             s.Draw(_spriteBatch, xoffset);
         }
         
         DrawRandomSigns();
-        powerSystem.Draw(_spriteBatch,xoffset);
+        powerSystem.DrawLift(_spriteBatch,xoffset);
         
         foreach (SolidPlatform s in platforms) {
             s.Draw(_spriteBatch, xoffset);
         }
+
+        powerSystem.DrawSwitch(_spriteBatch,xoffset);
 
         // code display
         codeInputObjects.ForEach(e=>e.Draw(_spriteBatch, xoffset));
@@ -321,6 +338,7 @@ public class GameRover : Game {
 
         rover.Draw(_spriteBatch, (int)(screenWidth*gameProportion));
 
+        decorHandler.DrawFg(_spriteBatch, xoffset);
     }
 
     private void InitGumUI() {

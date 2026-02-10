@@ -26,7 +26,7 @@ public static class PlatformData {
     public static List<((int,int),(int,int))> xsystriangles = [
         ((0,0),(5,5)),
         ((5,5),(0,10)),
-        ((-2,10),(10,20)),
+        ((0,10),(10,20)),
         ((15,20),(20,25)),
         ((15,10),(20,15)),
         ((20,5),(25,10)),

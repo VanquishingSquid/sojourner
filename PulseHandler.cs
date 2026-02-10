@@ -11,6 +11,7 @@ public class PulseHandler {
     int x,y,width,height;
     int barx, bary, barwidth, barheight;
     int padding = 20;
+
     Texture2D texture;
     List<int> times = [0,10,18,27,40,50,57,70,82];
     const int twindow = 3;
@@ -56,7 +57,6 @@ public class PulseHandler {
 
     public void Draw(SpriteBatch spriteBatch) {
         spriteBatch.Draw(texture, new Vector2(x,y), Color.White);
-        // Console.WriteLine($"{initbarx},{bary},{barwidth} ");
         spriteBatch.FillRectangle(new(barx,bary,barwidth,barheight), Color.Red);
 
         float secondlength = barwidth/30f;
@@ -70,11 +70,6 @@ public class PulseHandler {
                 newEnd = Math.Min(newEnd, barx+barwidth);
                 spriteBatch.FillRectangle(new(newPos,bary,newEnd-newPos,barheight), Color.Green);
             }
-            // spriteBatch.FillRectangle(new(initbarx+i*secondlength-timer*secondlength/60f,bary,twindow*secondlength,30), Color.Green);
         }
-        // for (int i=0;i<30;i+=5) {
-        //     spriteBatch.FillRectangle(new(barx+i*secondlength,bary,2,barheight), Color.Gray);
-        // }
-
     }
 }

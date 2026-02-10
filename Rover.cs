@@ -27,7 +27,7 @@ public class Rover {
     Texture2D texture;
 
     public Rover(List<SolidRect> solids, List<SolidTriangle> triangles, List<SolidPlatform> platforms, ContentManager Content) {
-        x = lastx = 0;
+        x = lastx = 1500;
         y = lasty = 0;
         width=32;
         height=width;

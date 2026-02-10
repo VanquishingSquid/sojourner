@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -13,8 +14,9 @@ public class SolidTriangle {
     public float gradient;
     public Vector2 toppoint, botpoint;
     public bool fake;
+    Texture2D texture;
 
-    public SolidTriangle(int x, int y, int width, int height, bool isslopeleft, bool fake=false) {
+    public SolidTriangle(ContentManager Content, int x, int y, int width, int height, bool isslopeleft, bool fake=false) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -24,25 +26,61 @@ public class SolidTriangle {
         this.botpoint = new Vector2(isslopeleft ? x+width : x, y+height);
         this.gradient = isslopeleft ? -height/width : height/width;
         this.fake = fake;
+        this.texture = isslopeleft ? 
+            Content.Load<Texture2D>("images/sloped-platform-left")
+          : Content.Load<Texture2D>("images/sloped-platform-right");
     }
 
     public void Update() {
     }
 
     public void Draw(SpriteBatch _spriteBatch, int xoffset) {
-        // Vector2 toppointlocal = isslopeleft ? new Vector2(0, 0) : new Vector2(width, 0);
-        // Vector2[] trianglePoints = [
-        //     new Vector2(width, height),
-        //     new Vector2(0, height),
-        //     toppointlocal,
-        // ];
+        Vector2 off = new Vector2(0,5-(isslopeleft ? 16 : 0));
         int x1=x;
         int y1=isslopeleft ? y : y+height;
         int x2=x+width;
         int y2=isslopeleft ? y+height : y;
 
-        // _spriteBatch.DrawPolygon(new Vector2(x-xoffset, y), trianglePoints, fake ? Color.LightGray : Color.LightGray, 3f);
-        _spriteBatch.DrawLine(x1-xoffset,y1,x2-xoffset,y2,Color.LightGray,6f,0f);
+        // for rightwards
+        if (!isslopeleft) {
+            int xi = (int)(x1-xoffset+off.X);
+            int end = xi+width;
+            int yi = (int)(y1+off.Y-texture.Height);
+            while (xi<end) {
+                _spriteBatch.Draw(
+                    texture,
+                    new Vector2(xi,yi),
+                    new Rectangle(0,0,Math.Min(end-xi,texture.Width),texture.Height),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+                xi += texture.Width;
+                yi -= texture.Width;
+            }
+        } else {
+            int xi = (int)(x1-xoffset+off.X);
+            int end = xi+width;
+            int yi = (int)(y1+off.Y);
+            while (xi<end) {
+                _spriteBatch.Draw(
+                    texture,
+                    new Vector2(xi,yi),
+                    new Rectangle(0,0,Math.Min(end-xi,texture.Width),texture.Height),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    0f
+                );
+                xi += texture.Width;
+                yi += texture.Width;
+            }
+        }
     }
 
     public Vector2? IntersectionPoint(Vector2 p1, Vector2 p2) {
